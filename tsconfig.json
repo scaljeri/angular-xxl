@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es5",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "removeComments": true,
+    "sourceMap": false,
+    "outDir": "bundle",
+    "declaration": true
+  },
+  "files": [
+    "src/route-params.ts",
+    "src/route-data.ts"
+  ]
+}
