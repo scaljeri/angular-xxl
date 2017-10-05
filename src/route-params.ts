@@ -10,7 +10,7 @@ export const RouteParams = function (annotation?: any): any {
                 parent = parent.parent;
             }
 
-            target[key] = data;
+            target[key] = params;
 
             target._ngOnInit.call(this);
         };
