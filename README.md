@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/scaljeri/angular-route-xxl.svg?style=svg)](https://circleci.com/gh/scaljeri/angular-route-xxl)
+
 TODO...
 
 Sources: 
