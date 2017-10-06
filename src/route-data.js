@@ -1,6 +1,8 @@
-function RouteData(annotation) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.RouteData = function (annotation) {
     return function (target, key, index) {
-        target._ngOnInit = target.ngOnInit;
+        var ngOnInit = target.ngOnInit;
         target.ngOnInit = function () {
             var parent = this.route;
             var data = null;
@@ -9,7 +11,8 @@ function RouteData(annotation) {
                 parent = parent.parent;
             }
             target[key] = data;
-            target._ngOnInit.call(this);
+            ngOnInit.call(this);
+            this.ngOnInit = ngOnInit;
         };
     };
-}
+};
