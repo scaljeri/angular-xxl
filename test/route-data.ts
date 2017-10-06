@@ -99,4 +99,19 @@ describe('Decorator RouteData', () => {
            should.not.exist(comp.ngOnInit);
        });
     });
+
+    describe('Without params', () => {
+       beforeEach(() => {
+           comp.route = {
+               data: {map: cb => cb({contacts: {}})}
+           };
+
+           RouteData()(comp, 'contacts', 0);
+           comp.ngOnInit();
+       });
+
+       it('should have set the data', () => {
+           comp.contacts.should.exist;
+       });
+    });
 });

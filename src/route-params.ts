@@ -1,5 +1,5 @@
 export const RouteParams = function (annotation?: any): any {
-    return (target: any, key: string, index: number) => {
+    return (target: any, key: string, index: number): void => {
         const ngOnInit = target.ngOnInit;
 
         target.ngOnInit = function (): void {
@@ -7,7 +7,7 @@ export const RouteParams = function (annotation?: any): any {
                 params = null;
 
             while (parent && !params) {
-                params = parent.params.map(d => d[annotation]);
+                params = parent.params.map(d => d[annotation || key]);
                 parent = parent.parent;
             }
 
