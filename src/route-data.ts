@@ -1,7 +1,8 @@
 export const RouteData = function (annotation?: any): any {
     return (target: any, key: string, index: number) => {
-        target._ngOnInit = target.ngOnInit;
-        target.ngOnInit = function () {
+        const ngOnInit = target.ngOnInit;
+
+        target.ngOnInit = function (): void {
             let parent = this.route;
             let data = null;
 
@@ -12,7 +13,8 @@ export const RouteData = function (annotation?: any): any {
 
             target[key] = data;
 
-            target._ngOnInit.call(this);
+            ngOnInit.call(this);
+            this.ngOnInit = ngOnInit;
         };
     }
-}
+};
