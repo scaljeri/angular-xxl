@@ -1,6 +1,12 @@
 [![CircleCI](https://circleci.com/gh/scaljeri/angular-route-xxl.svg?style=svg)](https://circleci.com/gh/scaljeri/angular-route-xxl)
 
-### Old
+This library provides two decorators: **@RouteData** and **@RouteParams**. They extract the resolved
+data and parameter values respectively using the `ActivatedRoute`. 
+
+Its only requirement is that the `ActivatedRoute` is injected in the components constructor as `route`
+
+### Without @RouteData / @RouteParams
+
 ```typescript
 @Component({
     selector: 'app-contacts',
@@ -20,7 +26,8 @@ export class ContactsComponent implements OnInit {
 }
 ```
 
-### New
+### With @RouteData / @RouteParams
+
 ```typescript
 @Component({
     selector: 'app-contacts',

@@ -13,8 +13,10 @@ export const RouteParams = function (annotation?: any): any {
 
             target[key] = params;
 
-            ngOnInit.call(this);
-            target.ngOnInit = ngOnInit;
+            if (ngOnInit) {
+                ngOnInit.call(this);
+                target.ngOnInit = ngOnInit;
+            }
         };
     };
 };
