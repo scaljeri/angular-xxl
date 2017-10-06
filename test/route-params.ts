@@ -24,10 +24,10 @@ describe('Decorator RouteParams', () => {
     describe('Not nested', () => {
        beforeEach(() => {
            comp.route = {
-               params: {map: cb => cb({contacts: {}})}
+               params: {map: cb => cb({contactId: {}})}
            };
 
-           RouteParams('contacts')(comp, 'params$', 0);
+           RouteParams('contactId')(comp, 'params$', 0);
            comp.ngOnInit();
        });
 
@@ -53,12 +53,12 @@ describe('Decorator RouteParams', () => {
                 parent: {
                     params,
                     parent: {
-                        params: {map: cb => cb({contacts: {}})}
+                        params: {map: cb => cb({contactId: {}})}
                     }
                 }
             };
 
-            RouteParams('contacts')(comp, 'params$', 0);
+            RouteParams('contactId')(comp, 'params$', 0);
             comp.ngOnInit();
         });
 
@@ -72,6 +72,31 @@ describe('Decorator RouteParams', () => {
 
         it('should have restored ngOnInit', () => {
             comp.ngOnInit.should.equals(spy);
+        });
+    });
+
+    describe('Without ngOnInit', () => {
+        beforeEach(() => {
+            delete comp.ngOnInit;
+            comp.route = { params: {map: cb => cb({contactId: {}})}};
+
+            RouteParams('contactId')(comp, 'params$', 0);
+        });
+
+        it('should have created ngOnInit', () => {
+            comp.ngOnInit.should.exist;
+        });
+
+        it('should inject the data', () => {
+            comp.ngOnInit();
+
+            comp.params$.should.exist;
+        });
+
+        it('should remove the fake ngOnInit', () => {
+            comp.ngOnInit();
+
+            should.not.exist(comp.ngOnInit);
         });
     });
 });

@@ -74,4 +74,29 @@ describe('Decorator RouteData', () => {
             comp.ngOnInit.should.equals(spy);
         });
     });
+
+    describe('Without ngOnInit', () => {
+       beforeEach(() => {
+          delete comp.ngOnInit;
+          comp.route = {data: {map: cb => cb({contacts: {}})}};
+
+           RouteData('contacts')(comp, 'contacts$', 0);
+       });
+
+       it('should have created ngOnInit', () => {
+           comp.ngOnInit.should.exist;
+       });
+
+       it('should inject the data', () => {
+           comp.ngOnInit();
+
+           comp.contacts$.should.exist;
+       });
+
+       it('should remove the fake ngOnInit', () => {
+           comp.ngOnInit();
+
+           should.not.exist(comp.ngOnInit);
+       });
+    });
 });

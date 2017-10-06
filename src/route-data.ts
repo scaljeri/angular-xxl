@@ -13,6 +13,7 @@ export const RouteData = function (annotation?: any): (any, string, index) => vo
 
             target[key] = data;
 
+            delete this.ngOnInit;
             if (ngOnInit) {
                 ngOnInit.call(this);
                 this.ngOnInit = ngOnInit;

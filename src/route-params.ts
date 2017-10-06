@@ -13,6 +13,7 @@ export const RouteParams = function (annotation?: any): any {
 
             target[key] = params;
 
+            delete this.ngOnInit;
             if (ngOnInit) {
                 ngOnInit.call(this);
                 target.ngOnInit = ngOnInit;
