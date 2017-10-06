@@ -22,5 +22,9 @@
   },
   "peerDependencies": {
     "@angular/core": "^4.0.0"
+  },
+  "dependencies": {
+    "sinon": "^4.0.1",
+    "sinon-chai": "^2.14.0"
   }
 }

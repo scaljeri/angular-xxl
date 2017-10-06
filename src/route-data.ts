@@ -1,10 +1,10 @@
-export const RouteData = function (annotation?: any): any {
+export const RouteData = function (annotation?: any): (any, string, index) => void {
     return (target: any, key: string, index: number) => {
         const ngOnInit = target.ngOnInit;
 
         target.ngOnInit = function (): void {
-            let parent = this.route;
-            let data = null;
+            let parent = this.route,
+                data = null;
 
             while (parent && !data) {
                 data = parent.data.map(d => d[annotation]);
@@ -16,5 +16,5 @@ export const RouteData = function (annotation?: any): any {
             ngOnInit.call(this);
             this.ngOnInit = ngOnInit;
         };
-    }
+    };
 };

@@ -3,19 +3,18 @@ export const RouteParams = function (annotation?: any): any {
         const ngOnInit = target.ngOnInit;
 
         target.ngOnInit = function (): void {
-            let parent = this.route;
-            let data = null;
+            let parent = this.route,
+                params = null;
 
-            while (parent && !data) {
-                data = parent.data.map(d => d[annotation]);
+            while (parent && !params) {
+                params = parent.params.map(d => d[annotation]);
                 parent = parent.parent;
             }
 
-
-            target[key] = data;
+            target[key] = params;
 
             ngOnInit.call(this);
             target.ngOnInit = ngOnInit;
         };
-    }
+    };
 };

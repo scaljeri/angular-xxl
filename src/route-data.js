@@ -4,8 +4,7 @@ exports.RouteData = function (annotation) {
     return function (target, key, index) {
         var ngOnInit = target.ngOnInit;
         target.ngOnInit = function () {
-            var parent = this.route;
-            var data = null;
+            var parent = this.route, data = null;
             while (parent && !data) {
                 data = parent.data.map(function (d) { return d[annotation]; });
                 parent = parent.parent;

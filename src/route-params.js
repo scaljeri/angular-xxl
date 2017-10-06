@@ -1,15 +1,17 @@
-function RouteParams(annotation) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.RouteParams = function (annotation) {
     return function (target, key, index) {
-        target._ngOnInit = target.ngOnInit;
+        var ngOnInit = target.ngOnInit;
         target.ngOnInit = function () {
-            var parent = this.route;
-            var data = null;
-            while (parent && !data) {
-                data = parent.data.map(function (d) { return d[annotation]; });
+            var parent = this.route, params = null;
+            while (parent && !params) {
+                params = parent.params.map(function (d) { return d[annotation]; });
                 parent = parent.parent;
             }
-            target[key] = data;
-            target._ngOnInit.call(this);
+            target[key] = params;
+            ngOnInit.call(this);
+            target.ngOnInit = ngOnInit;
         };
     };
-}
+};

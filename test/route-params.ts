@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { RouteData } from '../src/route-data';
+import { RouteParams } from '../src/route-params';
 import 'mocha';
 import * as sinonChai from 'sinon-chai';
 import * as sinon from 'sinon';
@@ -8,7 +8,7 @@ import * as chai from 'chai';
 const should = chai.should();
 chai.use(sinonChai);
 
-describe('Decorator RouteData', () => {
+describe('Decorator RouteParams', () => {
     let comp, spy;
 
     beforeEach(() => {
@@ -18,21 +18,21 @@ describe('Decorator RouteData', () => {
     });
 
     it('should exist', () => {
-        expect(RouteData).should.exist;
+        expect(RouteParams).should.exist;
     });
 
     describe('Not nested', () => {
        beforeEach(() => {
            comp.route = {
-               data: {map: cb => cb({contacts: {}})}
+               params: {map: cb => cb({contacts: {}})}
            };
 
-           RouteData('contacts')(comp, 'data$', 0);
+           RouteParams('contacts')(comp, 'params$', 0);
            comp.ngOnInit();
        });
 
-       it('should have found the data', () => {
-           should.exist(comp.data$);
+       it('should have found the param', () => {
+           should.exist(comp.params$);
        });
 
        it('should have called ngOnInit', () => {
@@ -46,24 +46,24 @@ describe('Decorator RouteData', () => {
 
     describe('Nested', () => {
         beforeEach(() => {
-            let data = {map: cb => cb({})};
+            let params = {map: cb => cb({})};
 
             comp.route = {
-                data,
+                params,
                 parent: {
-                    data,
+                    params,
                     parent: {
-                        data: {map: cb => cb({contacts: {}})}
+                        params: {map: cb => cb({contacts: {}})}
                     }
                 }
             };
 
-            RouteData('contacts')(comp, 'data$', 0);
+            RouteParams('contacts')(comp, 'params$', 0);
             comp.ngOnInit();
         });
 
-        it('should have found the data', () => {
-            should.exist(comp.data$);
+        it('should have found the param', () => {
+            should.exist(comp.params$);
         });
 
         it('should have called ngOnInit', () => {
