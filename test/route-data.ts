@@ -106,12 +106,12 @@ describe('Decorator RouteData', () => {
                data: {map: cb => cb({contacts: {}})}
            };
 
-           RouteData()(comp, 'contacts', 0);
+           RouteData()(comp, 'contacts$', 0);
            comp.ngOnInit();
        });
 
        it('should have set the data', () => {
-           comp.contacts.should.exist;
+           comp.contacts$.should.exist;
        });
     });
 });

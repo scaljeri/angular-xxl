@@ -103,15 +103,15 @@ describe('Decorator RouteParams', () => {
     describe('Without params', () => {
         beforeEach(() => {
             comp.route = {
-                params: {map: cb => cb({paramId: {}})}
+                params: {map: cb => cb({contactId: {}})}
             };
 
-            RouteParams()(comp, 'paramId', 0);
+            RouteParams()(comp, 'contactId$', 0);
             comp.ngOnInit();
         });
 
         it('should have set the data', () => {
-            comp.paramId.should.exist;
+            comp.contactId$.should.exist;
         });
     });
 });

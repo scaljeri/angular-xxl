@@ -7,7 +7,7 @@ export const RouteData = function (annotation?: string): any {
                 data = null;
 
             while (parent && !data) {
-                data = parent.data.map(d => d[annotation || key]);
+                data = parent.data.map(d => d[annotation || key.replace(/\$$/, '')]);
                 parent = parent.parent;
             }
 
