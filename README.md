@@ -42,7 +42,8 @@ export class ContactsComponent {
 }
 ```
 
-The argument for both decorators is optional if identical to the property name (ignoring the '$')
+The argument for both decorators is optional only if the value is identical to the property name 
+the decorator belongs to (ignoring the '$')
 
 ```typescript
 @RouteData() contacts$: Observable<Contact[]>;

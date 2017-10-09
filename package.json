@@ -1,6 +1,6 @@
 {
   "name": "angular-route-xxl",
-  "version": "1.0.0-rc.7",
+  "version": "1.0.0",
   "main": "index.js",
   "types": "index.d.ts",
   "repository": "https://github.com/scaljeri/angular-route-xxl.git",
