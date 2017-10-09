@@ -41,3 +41,14 @@ export class ContactsComponent {
     constructor(private route: ActivatedRoute) {}
 }
 ```
+
+The argument for the decorators is not required only if its value is identical to the property name (ignoring the '$')
+
+```typescript
+@RouteData() contacts$: Observable<Contact[]>;
+@RouteParams() contactId$: Observable<string>;
+```
+
+### Contributors
+
+   + @dirkluijk - Suggested to solve the issue using decorators
