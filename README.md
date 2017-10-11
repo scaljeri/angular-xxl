@@ -1,9 +1,9 @@
-[![CircleCI](https://circleci.com/gh/scaljeri/angular-route-xxl.svg?style=svg)](https://circleci.com/gh/scaljeri/angular-route-xxl)
-
 This library provides two decorators: **@RouteData** and **@RouteParams**. They extract the resolved
 data and parameter values respectively using the `ActivatedRoute`. 
 
 Its only requirement is that the `ActivatedRoute` is injected in the components constructor as `route`
+
+[![CircleCI](https://circleci.com/gh/scaljeri/angular-route-xxl.svg?style=svg)](https://circleci.com/gh/scaljeri/angular-route-xxl)
 
 ### Without @RouteData / @RouteParams
 
