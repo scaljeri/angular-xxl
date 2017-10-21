@@ -1,11 +1,19 @@
 {
   "name": "angular-route-xxl",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "index.js",
   "types": "index.d.ts",
   "repository": "https://github.com/scaljeri/angular-route-xxl.git",
   "author": "lucascalje <lucas@calje.eu>",
   "license": "MIT",
+  "keywords": [
+    "angular",
+    "router",
+    "resolve",
+    "parameter",
+    "data",
+    "decorator"
+  ],
   "scripts": {
     "build": "rm -rf bundle && tsc",
     "prepublish": "yarn build",
