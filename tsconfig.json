@@ -8,10 +8,10 @@
     "removeComments": true,
     "sourceMap": false,
     "outDir": "bundle",
-    "declaration": true
+    "declaration": true,
+    "lib": ["es2015"]
   },
   "files": [
-    "src/route-params.ts",
-    "src/route-data.ts"
+    "src/route-decorators.ts"
   ]
 }

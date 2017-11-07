@@ -1,9 +1,11 @@
 import { expect } from 'chai';
-import { RouteData } from '../src/route-data';
+import { RouteData } from '../index';
 import 'mocha';
 import * as sinonChai from 'sinon-chai';
 import * as sinon from 'sinon';
 import * as chai from 'chai';
+import { Observable } from 'rxjs/Rx'
+import 'rxjs/add/observable/of';
 
 const should = chai.should();
 chai.use(sinonChai);
@@ -113,5 +115,24 @@ describe('Decorator RouteData', () => {
        it('should have set the data', () => {
            comp.contacts$.should.exist;
        });
+   });
+
+   describe('With { observable: false }', () => {
+    beforeEach(() => {
+        comp.route = {
+             data: Observable.of({ contactId: '123' })
+        };
+
+        RouteData('contactId', { observable: false })(comp, 'contactId', 0);
+        comp.ngOnInit();
     });
+
+    it('should have found the contact id', () => {
+        should.exist(comp.contactId);
+    })
+
+    it('should have correct value for contact id', () => {
+        should.equal(comp.contactId, '123');
+    })
+});
 });

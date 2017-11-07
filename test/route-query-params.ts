@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { RouteParams } from '../index';
+import { RouteQueryParams } from '../index';
 import 'mocha';
 import * as sinonChai from 'sinon-chai';
 import * as sinon from 'sinon';
@@ -10,7 +10,7 @@ import 'rxjs/add/observable/of';
 const should = chai.should();
 chai.use(sinonChai);
 
-describe('Decorator RouteParams', () => {
+describe('Decorator RouteQueryParams', () => {
     let comp, spy;
 
     beforeEach(() => {
@@ -20,52 +20,52 @@ describe('Decorator RouteParams', () => {
     });
 
     it('should exist', () => {
-        expect(RouteParams).should.exist;
+        expect(RouteQueryParams).should.exist;
     });
 
     describe('Not nested', () => {
-       beforeEach(() => {
-           comp.route = {
-               params: {map: cb => cb({contactId: {}})}
-           };
-
-           RouteParams('contactId')(comp, 'params$', 0);
-           comp.ngOnInit();
-       });
-
-       it('should have found the param', () => {
-           should.exist(comp.params$);
-       });
-
-       it('should have called ngOnInit', () => {
-           spy.should.have.been.called;
-       });
-
-       it('should have restored ngOnInit', () => {
-           comp.ngOnInit.should.equals(spy);
-       });
-    });
-
-    describe('Nested', () => {
         beforeEach(() => {
-            let params = {map: cb => cb({})};
-
             comp.route = {
-                params,
-                parent: {
-                    params,
-                    parent: {
-                        params: {map: cb => cb({contactId: {}})}
-                    }
-                }
+                queryParams: { map: cb => cb({ contactId: {} }) }
             };
 
-            RouteParams('contactId')(comp, 'params$', 0);
+            RouteQueryParams('contactId')(comp, 'queryParams$', 0);
             comp.ngOnInit();
         });
 
         it('should have found the param', () => {
-            should.exist(comp.params$);
+            should.exist(comp.queryParams$);
+        });
+
+        it('should have called ngOnInit', () => {
+            spy.should.have.been.called;
+        });
+
+        it('should have restored ngOnInit', () => {
+            comp.ngOnInit.should.equals(spy);
+        });
+    });
+
+    describe('Nested', () => {
+        beforeEach(() => {
+            let queryParams = { map: cb => cb({}) };
+
+            comp.route = {
+                queryParams,
+                parent: {
+                    queryParams,
+                    parent: {
+                        queryParams: { map: cb => cb({ contactId: {} }) }
+                    }
+                }
+            };
+
+            RouteQueryParams('contactId')(comp, 'queryParams$', 0);
+            comp.ngOnInit();
+        });
+
+        it('should have found the param', () => {
+            should.exist(comp.queryParams$);
         });
 
         it('should have called ngOnInit', () => {
@@ -80,9 +80,9 @@ describe('Decorator RouteParams', () => {
     describe('Without ngOnInit', () => {
         beforeEach(() => {
             delete comp.ngOnInit;
-            comp.route = { params: {map: cb => cb({contactId: {}})}};
+            comp.route = { queryParams: { map: cb => cb({ contactId: {} }) } };
 
-            RouteParams('contactId')(comp, 'params$', 0);
+            RouteQueryParams('contactId')(comp, 'queryParams$', 0);
         });
 
         it('should have created ngOnInit', () => {
@@ -92,7 +92,7 @@ describe('Decorator RouteParams', () => {
         it('should inject the data', () => {
             comp.ngOnInit();
 
-            comp.params$.should.exist;
+            comp.queryParams$.should.exist;
         });
 
         it('should remove the fake ngOnInit', () => {
@@ -102,13 +102,13 @@ describe('Decorator RouteParams', () => {
         });
     });
 
-    describe('Without params', () => {
+    describe('Without queryParams', () => {
         beforeEach(() => {
             comp.route = {
-                params: {map: cb => cb({contactId: {}})}
+                queryParams: { map: cb => cb({ contactId: {} }) }
             };
 
-            RouteParams()(comp, 'contactId$', 0);
+            RouteQueryParams()(comp, 'contactId$', 0);
             comp.ngOnInit();
         });
 
@@ -120,10 +120,10 @@ describe('Decorator RouteParams', () => {
     describe('With { observable: false }', () => {
         beforeEach(() => {
             comp.route = {
-                params: Observable.of({ contactId: '123' })
+                queryParams: Observable.of({ contactId: '123' })
             };
 
-            RouteParams('contactId', { observable: false })(comp, 'contactId', 0);
+            RouteQueryParams('contactId', { observable: false })(comp, 'contactId', 0);
             comp.ngOnInit();
         });
 
