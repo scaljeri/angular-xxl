@@ -1,8 +1,6 @@
-const routeDecorators = require('./bundle/route-decorators');
-const routeDecoratorFactory = routeDecorators.routeDecoratorFactory;
-
-exports.RouteXxlConfig = routeDecorators.RouteXxlConfig;
-
-exports.RouteData = routeDecoratorFactory('data');
-exports.RouteParams = routeDecoratorFactory('params');
-exports.RouteQueryParams = routeDecoratorFactory('queryParams');
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var route_decorators_1 = require("./bundle/route-decorators");
+exports.RouteData = route_decorators_1.routeDecoratorFactory('data');
+exports.RouteParams = route_decorators_1.routeDecoratorFactory('params');
+exports.RouteQueryParams = route_decorators_1.routeDecoratorFactory('queryParams');

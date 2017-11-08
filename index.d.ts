@@ -1,5 +1,5 @@
-export { RouteXxlConfig } from './bundle/route-decorators';
-
-export declare function RouteData(annotation?: string, config?: RouteXxlConfig): any;
-export declare function RouteParams(annotation?: string, config?: RouteXxlConfig): any;
-export declare function RouteQueryParams(annotation?: string, config?: RouteXxlConfig): any;
+import { RouteXxlConfig } from "./bundle/route-decorators";
+export { RouteXxlConfig };
+export declare const RouteData: (annotation?: string, config?: RouteXxlConfig) => any;
+export declare const RouteParams: (annotation?: string, config?: RouteXxlConfig) => any;
+export declare const RouteQueryParams: (annotation?: string, config?: RouteXxlConfig) => any;

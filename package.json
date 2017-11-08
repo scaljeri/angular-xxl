@@ -1,6 +1,6 @@
 {
   "name": "angular-route-xxl",
-  "version": "1.0.3",
+  "version": "1.1.1",
   "main": "index.js",
   "types": "index.d.ts",
   "repository": "https://github.com/scaljeri/angular-route-xxl.git",
@@ -15,7 +15,7 @@
     "decorator"
   ],
   "scripts": {
-    "build": "rm -rf bundle && tsc",
+    "build": "rm -rf bundle && tsc && tsc -d --lib 'es2015' ./index.ts",
     "prepublish": "yarn build",
     "test": "mocha -r ts-node/register test/**/*.ts"
   },
