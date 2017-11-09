@@ -1,7 +1,7 @@
 This library provides three decorators: **@RouteData**, **@RouteParams** and **@RouteQueryParams**. They extract the resolved
 data, route parameters and query parameters values respectively using the `ActivatedRoute`. 
 
-Its only requirement is that the `ActivatedRoute` is injected in the components constructor as `route`
+Its only requirement is that the `ActivatedRoute` is injected in the component's constructor as `route`
 
 [![CircleCI](https://circleci.com/gh/scaljeri/angular-route-xxl.svg?style=svg)](https://circleci.com/gh/scaljeri/angular-route-xxl)
 
