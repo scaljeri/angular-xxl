@@ -28,8 +28,7 @@
     "sinon": "^4.0.1",
     "sinon-chai": "^2.14.0",
     "ts-node": "^3.3.0",
-    "typescript": "^2.5.3",
-    "typings": "^2.1.1"
+    "typescript": "^2.5.3"
   },
   "peerDependencies": {
     "@angular/core": "^4.0.0"
