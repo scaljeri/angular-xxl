@@ -65,7 +65,7 @@ to the decorator
 @RouteQueryParams('search', { observable: false }) search: string;
 ```
 
-Unlike the route snapshot, these values are automatically update whenever the url changes.
+Unlike the route snapshot, these values are automatically updated whenever the url changes.
 
 ### Contributors
    + @dirkluijk - Suggested to solve the issue using decorators
