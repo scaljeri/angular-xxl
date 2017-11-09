@@ -1,5 +1,5 @@
-This library provides three decorators: **@RouteData**, **@RouteParams**, and **@RouteQueryParams**. They extract the resolved
-data, parameter, and query parameters values respectively using the `ActivatedRoute`. 
+This library provides three decorators: **@RouteData**, **@RouteParams** and **@RouteQueryParams**. They extract the resolved
+data, route parameters and query parameters values respectively using the `ActivatedRoute`. 
 
 Its only requirement is that the `ActivatedRoute` is injected in the components constructor as `route`
 
@@ -54,16 +54,19 @@ the decorator belongs to (ignoring the '$')
 @RouteQueryParams() search$: Observable<string>;
 ```
 
-### Getting params/data as strings instead of Observables
+### Actual values instead of Observables 
 
-If you want, you can get the route params or data as a string instead of as an observable of a string. This can be done using the `config` argument on each decorator. Unlike the route snapshot, though, the param or data value will automatically update itself whenever the param or data value changes.
+If what you need is the actual value instead of an Observable, add the `observable: false` config option
+to the decorator
 
 ```typescript
-@RouteData('contacts', { observable: false }) contacts: Contact[]
+@RouteData('contacts', { observable: false }) contacts: Contact[];
 @RouteParams('contactId', { observable: false }) contactId: string;
-@RouteQueryParams('search', { observable: false }) search: string
+@RouteQueryParams('search', { observable: false }) search: string;
 ```
+
+Unlike the route snapshot, these values are automatically update whenever the url changes.
 
 ### Contributors
    + @dirkluijk - Suggested to solve the issue using decorators
-   + @superMDguy - Added `@RouteQueryParams()` and option to return string instead of Observable
+   + @superMDguy - Added `@RouteQueryParams()` and an option to return actual values instead of Observables
