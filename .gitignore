@@ -1,4 +1,5 @@
 node_modules
 .idea
 bundle
-**/*.js
+*.js
+index.d.ts
