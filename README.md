@@ -11,7 +11,7 @@ Its only requirement is that the `ActivatedRoute` is injected in the component's
 @Component({
     selector: 'app-contacts',
     templateUrl: './contacts.component.html',
-    styleUrls: ['./contacts.component.scss'
+    styleUrls: ['./contacts.component.scss']
 })
 export class ContactsComponent implements OnInit {
     contacts$: Observable<Contact[]>;
@@ -34,7 +34,7 @@ export class ContactsComponent implements OnInit {
 @Component({
     selector: 'app-contacts',
     templateUrl: './contacts.component.html',
-    styleUrls: ['./contacts.component.scss'
+    styleUrls: ['./contacts.component.scss']
 })
 export class ContactsComponent {
     @RouteData('contacts') contacts$: Observable<Contact[]>;
