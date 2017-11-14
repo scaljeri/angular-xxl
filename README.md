@@ -4,6 +4,8 @@ data, route parameters and query parameters values respectively using the `Activ
 Its only requirement is that the `ActivatedRoute` is injected in the component's constructor as `route`
 
 [![CircleCI](https://circleci.com/gh/scaljeri/angular-route-xxl.svg?style=svg)](https://circleci.com/gh/scaljeri/angular-route-xxl)
+[![Coverage Status](https://coveralls.io/repos/github/scaljeri/angular-route-xxl/badge.svg?branch=multiple-values)](https://coveralls.io/github/scaljeri/angular-route-xxl?branch=multiple-values)
+[![GitHub issues](https://img.shields.io/github/issues/scaljeri/angular-route-xxl.svg?style=plastic)](https://github.com/scaljeri/angular-route-xxl/issues)
 
 ### Without @RouteData / @RouteParams / @RouteQueryParams
 
@@ -66,6 +68,23 @@ to the decorator
 ```
 
 Unlike the route snapshot, these values are automatically updated whenever the url changes.
+
+### Multiple arguments
+Above, each route value is injected into its own property on the component. But it is also possible
+to merge them all into a single object
+
+```typescript
+@RouteParams('userId', 'itemId', 'messageId', {observable: false}) params;
+// Usage: this.params.itemId   
+```
+
+or
+
+```typescript
+@RouteParams('userId', 'itemId', 'messageId') params$; 
+```
+
+This can be used for all three decorators.
 
 ### Contributors
    + @dirkluijk - Suggested to solve the issue using decorators
