@@ -7,6 +7,8 @@ Its only requirement is that the `ActivatedRoute` is injected in the component's
 [![Coverage Status](https://coveralls.io/repos/github/scaljeri/angular-route-xxl/badge.svg?branch=multiple-values)](https://coveralls.io/github/scaljeri/angular-route-xxl?branch=multiple-values)
 [![GitHub issues](https://img.shields.io/github/issues/scaljeri/angular-route-xxl.svg?style=plastic)](https://github.com/scaljeri/angular-route-xxl/issues)
 
+[Stackblitz demo](https://stackblitz.com/edit/angular-dtexzt)
+
 ### Without @RouteData / @RouteParams / @RouteQueryParams
 
 ```typescript
@@ -56,7 +58,7 @@ the decorator belongs to (ignoring the '$')
 @RouteQueryParams() search$: Observable<string>;
 ```
 
-### Actual values instead of Observables 
+### Real values instead of Observables 
 
 If what you need is the actual value instead of an Observable, add the `observable: false` config option
 to the decorator
