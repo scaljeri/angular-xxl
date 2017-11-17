@@ -11,7 +11,7 @@ import { combineLatest } from 'rxjs/observable/combineLatest';
  * @returns {Observable<Data | Params>[]}
  */
 function extractRoutes(parent, routeProperty): Observable<any>[] {
-    let routes = [];
+    const routes = [];
 
     while (parent) {
         routes.push(parent[routeProperty]);
@@ -66,8 +66,8 @@ export interface RouteXxlConfig {
  * @param {string} routeProperty used to create a data, params or queryParams decorator function
  * @returns {(...args: string | RouteXxlConfig[]) => any}
  */
-export function routeDecoratorFactory(routeProperty) {
-    return function (...args: Array<string | RouteXxlConfig>): any {
+function routeDecoratorFactory(routeProperty) {
+    return (...args: Array<string | RouteXxlConfig>): any =>  {
         const config = (typeof args[args.length - 1] === 'object' ? args.pop() : {}) as RouteXxlConfig;
 
         return (target: any, key: string, index: number): void => {
@@ -77,7 +77,7 @@ export function routeDecoratorFactory(routeProperty) {
                 args = [key.replace(/\$$/, '')];
             }
 
-            target.ngOnInit = function (): void {
+            target.ngOnInit = function(): void {
                 if (!this.route) {
                     throw(`${target.constructor.name} uses the ${routeProperty} @decorator without a 'route' property`);
                 }
@@ -95,4 +95,22 @@ export function routeDecoratorFactory(routeProperty) {
             };
         };
     };
+}
+
+export function RouteData(...args: Array<string | RouteXxlConfig>): any {
+    const handler = routeDecoratorFactory('data');
+
+    return handler(...args);
+}
+
+export function RouteParams(...args: Array<string | RouteXxlConfig>): any {
+    const handler = routeDecoratorFactory('params');
+
+    return handler(...args);
+}
+
+export function RouteQueryParams(...args: Array<string | RouteXxlConfig>): any {
+    const handler = routeDecoratorFactory('queryParams');
+
+    return handler(...args);
 }
