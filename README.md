@@ -1,7 +1,8 @@
 This library provides three decorators: **@RouteData**, **@RouteParams** and **@RouteQueryParams**. They extract the resolved
 data, route parameters and query parameters values respectively using the `ActivatedRoute`. 
 
-Its only requirement is that the `ActivatedRoute` is injected in the component's constructor as `route`
+The decorators require that the `ActivatedRoute` is injected in the component's constructor as `route` and
+that the component has the `ngOnInit` function defined. 
 
 [![CircleCI](https://circleci.com/gh/scaljeri/angular-route-xxl.svg?style=svg)](https://circleci.com/gh/scaljeri/angular-route-xxl)
 [![Coverage Status](https://coveralls.io/repos/github/scaljeri/angular-route-xxl/badge.svg?branch=multiple-values)](https://coveralls.io/github/scaljeri/angular-route-xxl?branch=multiple-values)
@@ -46,6 +47,8 @@ export class ContactsComponent {
     @RouteQueryParams('search') search$: Observable<string>;
     
     constructor(private route: ActivatedRoute) {}
+    
+    ngOnInit(): void {} // Without this it will not work if AOT enabled
 }
 ```
 

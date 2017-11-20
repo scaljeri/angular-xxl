@@ -33,18 +33,18 @@ function extractRoutes(parent, routeProperty): Observable<any>[] {
  */
 function extractValues(routes, args, config, cb): void {
     const stream$ = combineLatest(of(null), ...routes, (...routeValues) => {
-            const values = routeValues.reduce((obj, route) => {
-                args.forEach(arg => {
-                    if (route && route[arg] !== undefined) {
-                        obj[arg] = route[arg];
-                    }
-                });
+        const values = routeValues.reduce((obj, route) => {
+            args.forEach(arg => {
+                if (route && route[arg] !== undefined) {
+                    obj[arg] = route[arg];
+                }
+            });
 
-                return obj;
-            }, {});
+            return obj;
+        }, {});
 
-            return args.length === 1 ? values[args[0]] : values;
-        });
+        return args.length === 1 ? values[args[0]] : values;
+    });
 
     if (config.observable === false) {
         stream$.subscribe(cb);
@@ -64,53 +64,53 @@ export interface RouteXxlConfig {
  * Factory function which creates decorators for resolved route data, route params or query parameters.
  *
  * @param {string} routeProperty used to create a data, params or queryParams decorator function
- * @returns {(...args: string | RouteXxlConfig[]) => any}
+ * @returns {(...args: string | RouteXxlConfig[]) => PropertyDecorator}
  */
-function routeDecoratorFactory(routeProperty) {
-    return (...args: Array<string | RouteXxlConfig>): any =>  {
-        const config = (typeof args[args.length - 1] === 'object' ? args.pop() : {}) as RouteXxlConfig;
+function routeDecoratorFactory(routeProperty, args): PropertyDecorator {
+    const config = (typeof args[args.length - 1] === 'object' ? args.pop() : {}) as RouteXxlConfig;
 
-        return (target: any, key: string, index: number): void => {
-            const ngOnInit = target.ngOnInit;
+    return (target: { ngOnInit: () => void }, key: string): void => {
+        const ngOnInit = target.ngOnInit;
 
-            if (!args.length) {
-                args = [key.replace(/\$$/, '')];
+        if (!args.length) {
+            args = [key.replace(/\$$/, '')];
+        }
+
+        // `ngOnInit` should exist on the component, otherwise this decorator will not work with AOT!!
+        if (!target.ngOnInit) {
+            throw(new Error(`${target.constructor.name} uses the ${routeProperty} @decorator without implementing 'ngOnInit'`));
+        }
+
+        target.ngOnInit = function (): void {
+            if (!this.route) {
+                throw(new Error(`${target.constructor.name} uses the ${routeProperty} @decorator without a 'route' property`));
             }
 
-            target.ngOnInit = function(): void {
-                if (!this.route) {
-                    throw(`${target.constructor.name} uses the ${routeProperty} @decorator without a 'route' property`);
-                }
+            const routes = routeProperty === 'queryParams' ? [this.route.queryParams] : extractRoutes(this.route, routeProperty);
 
-                const routes = routeProperty === 'queryParams' ? [this.route.queryParams] : extractRoutes(this.route, routeProperty);
+            extractValues(routes, args, config, values => {
+                this[key] = values;
+            });
 
-                extractValues(routes, args, config, values => {
-                    this[key] = values;
-                });
-
-                this.ngOnInit = ngOnInit;
-                if (ngOnInit) {
-                    this.ngOnInit();
-                }
-            };
+            this.ngOnInit = ngOnInit;
+            if (ngOnInit) {
+                this.ngOnInit();
+            }
         };
     };
 }
 
-export function RouteData(...args: Array<string | RouteXxlConfig>): any {
-    const handler = routeDecoratorFactory('data');
-
-    return handler(...args);
+/*
+The factory is wrapped in a function for AOT to compile
+ */
+export function RouteData(...args: Array<string | RouteXxlConfig>): PropertyDecorator {
+    return routeDecoratorFactory('data', args);
 }
 
-export function RouteParams(...args: Array<string | RouteXxlConfig>): any {
-    const handler = routeDecoratorFactory('params');
-
-    return handler(...args);
+export function RouteParams(...args: Array<string | RouteXxlConfig>): PropertyDecorator {
+    return routeDecoratorFactory('params', args);
 }
 
-export function RouteQueryParams(...args: Array<string | RouteXxlConfig>): any {
-    const handler = routeDecoratorFactory('queryParams');
-
-    return handler(...args);
+export function RouteQueryParams(...args: Array<string | RouteXxlConfig>): PropertyDecorator {
+    return routeDecoratorFactory('queryParams', args);
 }

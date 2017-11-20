@@ -202,18 +202,13 @@ export function specs(RouteData, property, should) {
         describe('With ngOnInit-less component', () => {
             beforeEach(() => {
                 delete comp.ngOnInit;
-
-                RouteData('bar', {observable: false})(comp, 'bar');
+                comp.constructor = {name: 'BarFoo'};
             });
 
-            it('should have a temp ngOnInit function', () => {
-                should.exist(comp.ngOnInit);
-            });
-
-            it('should be removed after init', () => {
-                comp.ngOnInit();
-
-                should.not.exist(comp.ngOnInit);
+            it('should throw an error', () => {
+                (function () {
+                    RouteData('bar', {observable: false})(comp, 'bar');
+                }).should.throw(`BarFoo uses the ${property} @decorator without implementing 'ngOnInit'`);
             });
         });
 

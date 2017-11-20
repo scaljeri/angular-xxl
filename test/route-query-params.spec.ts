@@ -16,7 +16,7 @@ export function specs(RouteQueryParams, should) {
                 }
             };
 
-            comp = {route};
+            comp = {route, ngOnInit: () => {}};
         });
 
         it('should exist', () => {

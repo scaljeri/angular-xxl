@@ -4,3 +4,12 @@ src
 test
 .gitignore
 index.ts
+.coveralls.yml
+yarn-error.log
+tsconfig.json
+.circleci
+.idea
+coverage
+.nyc_output
+tsconfig.json
+.editorconfig
