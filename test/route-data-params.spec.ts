@@ -2,13 +2,20 @@ import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import * as sinon from 'sinon';
 
+import * as helper from './helpers';
+
 export function specs(RouteData, property, should) {
     describe('RouteData', () => {
         const bar = {}, fb = {foo: 'foo', baz: 'baz'}, moz = {};
 
-        let comp, spy, route, subjects;
+        let instances, Comp, comp, spy, route, subjects;
 
         beforeEach(() => {
+            ({instances, Comp, route, spy} = helper.setup(property));
+
+            /*
+            Comp.prototype.ngOnInit = spy;
+
             subjects = [new BehaviorSubject(null), new BehaviorSubject(null), new BehaviorSubject(null)];
 
             route = {
@@ -20,9 +27,9 @@ export function specs(RouteData, property, should) {
                     }
                 }
             };
+            */
 
-            spy = sinon.spy();
-            comp = {route: route, ngOnInit: spy};
+            comp = instances[0];
         });
 
         it('should exist', () => {
@@ -31,9 +38,9 @@ export function specs(RouteData, property, should) {
 
         describe('As observables', () => {
             beforeEach(() => {
-                RouteData('bar')(comp, 'bar$', 0);
-                RouteData('foo', 'baz')(comp, 'fb$', 0);
-                RouteData()(comp, 'moz$', 0);
+                RouteData('bar')(Comp.prototype, 'bar$', 0);
+                RouteData('foo', 'baz')(Comp.prototype, 'fb$', 0);
+                RouteData()(Comp.prototype, 'moz$', 0);
 
                 comp.ngOnInit();
             });
@@ -54,30 +61,31 @@ export function specs(RouteData, property, should) {
 
             describe('Root route only', () => {
                 beforeEach(() => {
-                    subjects[0].next({bar});
+                    helper.updateRoute(0, {bar});
                 });
 
                 describe('Propagate updates', () => {
                     it('should update the named decorator', () => {
                         comp.bar$.subscribe(data => {
+                            console.log(data,bar);
                             data.should.equals(bar)
                         });
                     });
 
                     it('should have no interference with other route updates', () => {
-                        subjects[1].next({moz});
+                        helper.updateRoute(1, {moz});
 
                         comp.bar$.subscribe(data => data.should.equals(bar));
                     });
 
                     it('should update the multi-named decorator', () => {
-                        subjects[0].next(fb);
+                        helper.updateRoute(0, fb);
 
                         comp.fb$.subscribe(data => data.should.eql(fb));
                     });
 
                     it('should update the implicit decorator', () => {
-                        subjects[0].next({moz});
+                        helper.updateRoute(0, {moz});
 
                         comp.moz$.subscribe(data => data.should.equals(moz));
                     });
@@ -86,9 +94,9 @@ export function specs(RouteData, property, should) {
 
             describe('Nested Routes', () => {
                 beforeEach(() => {
-                    subjects[0].next({bar});
-                    subjects[1].next(fb);
-                    subjects[2].next({moz});
+                    helper.updateRoute(0, {bar});
+                    helper.updateRoute(1, fb);
+                    helper.updateRoute(2, {moz});
                 });
 
                 describe('Propagate updates', () => {
@@ -108,9 +116,9 @@ export function specs(RouteData, property, should) {
         });
         describe('As strings', () => {
             beforeEach(() => {
-                RouteData('bar', {observable: false})(comp, 'bar', 0);
-                RouteData('foo', 'baz', {observable: false})(comp, 'fb', 0);
-                RouteData({observable: false})(comp, 'moz', 0);
+                RouteData('bar', {observable: false})(Comp.prototype, 'bar', 0);
+                RouteData('foo', 'baz', {observable: false})(Comp.prototype, 'fb', 0);
+                RouteData({observable: false})(Comp.prototype, 'moz', 0);
 
                 comp.ngOnInit();
             });
@@ -134,7 +142,7 @@ export function specs(RouteData, property, should) {
 
             describe('Root route only', () => {
                 beforeEach(() => {
-                    subjects[0].next({bar});
+                    helper.updateRoute(0, {bar});
                 });
 
                 describe('Propagate updates', () => {
@@ -143,19 +151,19 @@ export function specs(RouteData, property, should) {
                     });
 
                     it('should have no interference with other route updates', () => {
-                        subjects[1].next({moz});
+                        helper.updateRoute(1, {moz});
 
                         comp.bar.should.equals(bar);
                     });
 
                     it('should update the multi-named decorator', () => {
-                        subjects[0].next(fb);
+                        helper.updateRoute(0, fb);
 
                         comp.fb.should.eql(fb);
                     });
 
                     it('should update the implicit decorator', () => {
-                        subjects[0].next({moz});
+                        helper.updateRoute(0, {moz});
 
                         comp.moz.should.equals(moz);
                     });
@@ -164,9 +172,9 @@ export function specs(RouteData, property, should) {
 
             describe('Nested Routes', () => {
                 beforeEach(() => {
-                    subjects[0].next({bar});
-                    subjects[1].next(fb);
-                    subjects[2].next({moz});
+                    helper.updateRoute(0, {bar});
+                    helper.updateRoute(1, fb);
+                    helper.updateRoute(2, {moz});
                 });
 
                 describe('Propagate updates', () => {
@@ -187,9 +195,9 @@ export function specs(RouteData, property, should) {
 
         describe('As strings', () => {
             beforeEach(() => {
-                RouteData('bar', {observable: false})(comp, 'bar$', 0);
-                RouteData('foo', 'moz', {observable: false})(comp, 'foo$', 0);
-                RouteData({observable: false})(comp, 'baz$', 0);
+                RouteData('bar', {observable: false})(Comp.prototype, 'bar$', 0);
+                RouteData('foo', 'moz', {observable: false})(Comp.prototype, 'foo$', 0);
+                RouteData({observable: false})(Comp.prototype, 'baz$', 0);
 
                 comp.ngOnInit();
             });
@@ -201,14 +209,14 @@ export function specs(RouteData, property, should) {
 
         describe('With ngOnInit-less component', () => {
             beforeEach(() => {
-                delete comp.ngOnInit;
-                comp.constructor = {name: 'BarFoo'};
+                delete Comp.prototype.ngOnInit;
+                comp = new Comp(route);
             });
 
             it('should throw an error', () => {
                 (function () {
-                    RouteData('bar', {observable: false})(comp, 'bar');
-                }).should.throw(`BarFoo uses the ${property} @decorator without implementing 'ngOnInit'`);
+                    RouteData('bar', {observable: false})(Comp.prototype, 'bar');
+                }).should.throw(`Comp uses the ${property} @decorator without implementing 'ngOnInit'`);
             });
         });
 
@@ -220,7 +228,7 @@ export function specs(RouteData, property, should) {
                 RouteData('bar', {observable: false})(comp, 'bar');
             });
 
-            it('should throw an missing route error', () => {
+            xit('should throw an missing route error', () => {
                 (function () {
                     comp.ngOnInit();
                 }).should.throw(`BarFoo uses the ${property} @decorator without a \'route\' property`);
