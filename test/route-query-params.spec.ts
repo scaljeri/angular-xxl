@@ -1,187 +1,130 @@
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { of } from 'rxjs/observable/of';
+import { Bar, Foo, setup, build, enableQueryParams } from './helpers';
 
 export function specs(RouteQueryParams, should) {
     describe('RouteQueryParams', () => {
-        let comp, subject, route;
+        let foos: Foo[],
+            bars: Bar[],
+            spyFoo, spyBar, route, subjects;
+
+        let qp;
 
         beforeEach(() => {
-            subject = new BehaviorSubject(null);
-
-
-            route = {
-                queryParams: subject.asObservable(),
-                parent: {
-                    queryParams: of({foo: 2}),
-                }
-            };
-
-            comp = {route, ngOnInit: () => {}};
+            setup();
         });
 
         it('should exist', () => {
-            RouteQueryParams.should.exist;
+            should.exist(RouteQueryParams);
         });
 
-        describe('As observable', () => {
+        describe('As observables', () => {
+            beforeEach(() => {
+                RouteQueryParams('foa')(Foo.prototype, 'a$', 0);
+                RouteQueryParams('foa', 'fob')(Foo.prototype, 'ab$', 0);
+                RouteQueryParams()(Foo.prototype, 'foc$', 0);
+
+                ({foos, bars, route, spyFoo, spyBar, subjects} = build());
+                qp = enableQueryParams(route);
+
+                foos.forEach(foo => foo.ngOnInit());
+            });
+
             describe('Implicit value', () => {
                 beforeEach(() => {
-                    RouteQueryParams()(comp, 'foo$');
+                    qp.next({foc: 7});
                 });
 
-                it('should not have created the property', () => {
-                    should.not.exist(comp.foo$);
-                });
-
-                describe('After ngOnInit', () => {
-                    beforeEach(() => {
-                        comp.ngOnInit();
-                    });
-
-                    xit('should initially be empty', () => {
-                        comp.foo$.subscribe(qp => should.not.exist(qp));
-                    });
-
-                    it('should update with a new query param', () => {
-                        subject.next({foo: 1});
-
-                        comp.foo$.subscribe(qp => qp.should.eql(1));
-                    });
+                it('should have a value', () => {
+                    foos.forEach(foo => {
+                        foo.foc$.subscribe(value => {
+                            value.should.equal(7);
+                        })
+                    })
                 });
             });
-
             describe('Single value', () => {
                 beforeEach(() => {
-                    RouteQueryParams('foo')(comp, 'queryParams$');
+                    qp.next({foa: 8});
                 });
 
-
-                it('should have created ngOnInit', () => {
-                    should.exist(comp.ngOnInit);
-                });
-
-                it('should not have created the property', () => {
-                    should.not.exist(comp.queryParams$);
-                });
-
-                describe('After ngOnInit', () => {
-                    beforeEach(() => {
-                        comp.ngOnInit();
-                    });
-
-                    it('should initially be empty', () => {
-                        comp.queryParams$.subscribe(qp => {
-                            should.not.exist(qp);
+                it('should have a value', () => {
+                    foos.forEach(foo => {
+                        foo.a$.subscribe(value => {
+                            value.should.equal(8);
                         });
-                    });
 
-                    it('should update with a new query param', () => {
-                        subject.next({foo: 1});
-
-                        comp.queryParams$.subscribe(qp => {
-                            qp.should.eql(1);
+                        foo.ab$.subscribe(value => {
+                            value.should.eql({foa: 8});
                         });
-                    });
+                    })
                 });
             });
-
             describe('Multi value', () => {
                 beforeEach(() => {
-                    RouteQueryParams('bar', 'foo')(comp, 'queryParams$');
+                    qp.next({foa: 8, fob: 9});
                 });
 
-                describe('After ngOnInit', () => {
-                    beforeEach(() => {
-                        comp.ngOnInit();
-                    });
-
-                    it('should have created an empty object', () => {
-                        comp.queryParams$.subscribe(qp => qp.should.eql({}));
-                    });
-
-                    it('should update with a new query params', () => {
-                        subject.next({bar: 1, foo: 2});
-
-                        comp.queryParams$.subscribe(qp => {
-                            qp.should.eql({bar: 1, foo: 2});
+                it('should have a value', () => {
+                    foos.forEach(foo => {
+                        foo.a$.subscribe(value => {
+                            value.should.equal(8);
                         });
-                    });
+
+                        foo.ab$.subscribe(value => {
+                            value.should.eql({foa: 8, fob: 9});
+                        });
+                    })
                 });
             });
         });
 
         describe('As string', () => {
+            beforeEach(() => {
+                RouteQueryParams('foa', {observable: false})(Foo.prototype, 'a$', 0);
+                RouteQueryParams('foa', 'fob', {observable: false})(Foo.prototype, 'ab$', 0);
+                RouteQueryParams({observable: false})(Foo.prototype, 'foc$', 0);
+
+                ({foos, bars, route, spyFoo, spyBar, subjects} = build());
+                qp = enableQueryParams(route);
+
+                foos.forEach(foo => foo.ngOnInit());
+            });
+
             describe('Implicit value', () => {
                 beforeEach(() => {
-                    RouteQueryParams({observable: false})(comp, 'foo');
+                    qp.next({foc: 7});
                 });
 
-                it('should not have created the property', () => {
-                    should.not.exist(comp.foo);
-                });
-
-                describe('After ngOnInit', () => {
-                    beforeEach(() => {
-                        comp.ngOnInit();
-                    });
-
-                    it('should initially be empty', () => {
-                        should.not.exist(comp.foo);
-                    });
-
-                    it('should update with a new query param', () => {
-                        subject.next({foo: 1});
-
-                        comp.foo.should.eql(1);
+                it('should have a value', () => {
+                    foos.forEach(foo => {
+                        foo.foc$.should.equal(7);
                     });
                 });
             });
-
             describe('Single value', () => {
                 beforeEach(() => {
-                    RouteQueryParams('foo', {observable: false})(comp, 'foo');
+                    qp.next({foa: 8});
                 });
 
-                it('should not have created the property', () => {
-                    should.not.exist(comp.foo);
-                });
+                it('should have a value', () => {
+                    foos.forEach(foo => {
+                        foo.a$.should.equal(8);
 
-                describe('After ngOnInit', () => {
-                    beforeEach(() => {
-                        comp.ngOnInit();
-                    });
-
-                    it('should initially be empty', () => {
-                        should.not.exist(comp.foo);
-                    });
-
-                    it('should update with a new query param', () => {
-                        subject.next({foo: 1});
-
-                        comp.foo.should.eql(1);
-                    });
+                        foo.ab$.should.eql({foa: 8});
+                    })
                 });
             });
 
             describe('Multi value', () => {
                 beforeEach(() => {
-                    RouteQueryParams('bar', 'foo', {observable: false})(comp, 'queryParams');
+                    qp.next({foa: 8, fob: 9});
                 });
 
-                describe('After ngOnInit', () => {
-                    beforeEach(() => {
-                        comp.ngOnInit();
-                    });
+                it('should have a value', () => {
+                    foos.forEach(foo => {
+                        foo.a$.should.equal(8);
 
-                    it('should have created an empty object', () => {
-                        comp.queryParams.should.eql({});
-                    });
-
-                    it('should update with a new query params', () => {
-                        subject.next({bar: 1, foo: 2});
-
-                        comp.queryParams.should.eql({bar: 1, foo: 2});
-                    });
+                        foo.ab$.should.eql({foa: 8, fob: 9});
+                    })
                 });
             });
         });

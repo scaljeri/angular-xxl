@@ -1,238 +1,344 @@
 import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import * as sinon from 'sinon';
 
 import * as helper from './helpers';
+import { Bar, Foo } from './helpers';
 
-export function specs(RouteData, property, should) {
-    describe('RouteData', () => {
+export function specs(RoutXxl, property, should) {
+    describe('xxxxxx', () => {
         const bar = {}, fb = {foo: 'foo', baz: 'baz'}, moz = {};
 
-        let instances, Comp, comp, spy, route, subjects;
+        let foos: Foo[],
+            bars: Bar[],
+            spyFoo, spyBar, route, subjects;
+
+        let Comp, spy, comp;
 
         beforeEach(() => {
-            ({instances, Comp, route, spy} = helper.setup(property));
-
-            /*
-            Comp.prototype.ngOnInit = spy;
-
-            subjects = [new BehaviorSubject(null), new BehaviorSubject(null), new BehaviorSubject(null)];
-
-            route = {
-                [property]: subjects[0].asObservable(),
-                parent: {
-                    [property]: subjects[1].asObservable(),
-                    parent: {
-                        [property]: subjects[2].asObservable(),
-                    }
-                }
-            };
-            */
-
-            comp = instances[0];
+            helper.setup();
         });
 
         it('should exist', () => {
-            should.exist(RouteData);
+            should.exist(RoutXxl);
         });
 
         describe('As observables', () => {
             beforeEach(() => {
-                RouteData('bar')(Comp.prototype, 'bar$', 0);
-                RouteData('foo', 'baz')(Comp.prototype, 'fb$', 0);
-                RouteData()(Comp.prototype, 'moz$', 0);
+                RoutXxl('foa')(Foo.prototype, 'a$', 0);
+                RoutXxl('foa', 'fob')(Foo.prototype, 'ab$', 0);
+                RoutXxl()(Foo.prototype, 'foc$', 0);
 
-                comp.ngOnInit();
+                RoutXxl('baa')(Bar.prototype, 'a$', 0);
+                RoutXxl('baa', 'bab')(Bar.prototype, 'ab$', 0);
+                RoutXxl()(Bar.prototype, 'bac$', 0);
+
+                ({foos, bars, route, spyFoo, spyBar, subjects} = helper.build(property));
+
+                foos.forEach(foo => foo.ngOnInit());
+                bars.forEach(bar => bar.ngOnInit());
+            });
+
+            it('should have called the original ngOnInit for each instance', () => {
+                foos[0].ngOnInit.should.have.callCount(3);
+                bars[0].ngOnInit.should.have.calledThrice;
             });
 
             it('should have bind all observables', () => {
-                comp.bar$.should.be.instanceOf(Observable);
-                comp.fb$.should.be.instanceOf(Observable);
-                comp.moz$.should.be.instanceOf(Observable);
+                for (let i = 0; i < 3; i++) {
+                    foos[i].a$.should.be.instanceOf(Observable);
+                    foos[i].ab$.should.be.instanceOf(Observable);
+                    foos[i].foc$.should.be.instanceOf(Observable);
+
+                    bars[i].a$.should.be.instanceOf(Observable);
+                    bars[i].ab$.should.be.instanceOf(Observable);
+                    bars[i].bac$.should.be.instanceOf(Observable);
+                }
             });
 
-            it('should have called ngOnInit', () => {
-                spy.should.have.been.called;
+            it('should have given each a unique observable', () => {
+                foos[0].should.not.equal(foos[1]);
+                foos[0].should.not.equal(bars[0]);
             });
 
-            it('should have restored ngOnInit', () => {
-                comp.ngOnInit.should.equals(spy);
-            });
+            describe('Set route values', () => {
+                const data = {id: 1};
 
-            describe('Root route only', () => {
-                beforeEach(() => {
-                    helper.updateRoute(0, {bar});
+                describe('Root', () => {
+                    beforeEach(() => {
+                        subjects[0].next({foa: data})
+                    });
+
+                    describe('Foo.a$', () => {
+                        it('should send the data to the instances', () => {
+                            spy = sinon.spy();
+                            foos.forEach(foo => foo.a$.subscribe(spy));
+
+                            // Foo receives the data
+                            spy.should.have.calledThrice;
+                            spy.should.have.been.calledWith(data);
+                        });
+
+                        it('should not send data to ab$', () => {
+                            spy = sinon.spy();
+                            foos.forEach(foo => foo.ab$.subscribe(spy));
+                            spy.should.have.calledThrice;
+                            spy.should.have.been.calledWith({foa: data});
+                        });
+
+                        it('should not send data to foc$', () => {
+                            spy = sinon.spy();
+                            foos.forEach(foo => foo.foc$.subscribe(spy));
+                            spy.should.have.calledThrice;
+                            spy.should.have.been.calledWith(undefined);
+                        });
+
+                        it('should not send the data to Bar instances', () => {
+                            // Bar doesn't and only receives the initial `null` value
+                            spy = sinon.spy();
+                            bars.forEach(bar => bar.a$.subscribe(spy));
+                            spy.should.have.been.calledWith(undefined);
+                        });
+
+
+                    });
                 });
 
-                describe('Propagate updates', () => {
-                    it('should update the named decorator', () => {
-                        comp.bar$.subscribe(data => {
-                            console.log(data,bar);
-                            data.should.equals(bar)
+                describe('Root -> First child', () => {
+                    beforeEach(() => {
+                        subjects[1].next({foa: data})
+                    });
+
+                    describe('Foo.a$', () => {
+                        it('should send the data to the right routes', () => {
+                            spy = sinon.spy();
+                            foos.filter((v, i) => i > 0)
+                                .forEach(foo => foo.a$.subscribe(spy));
+
+                            // Foo receives the data
+                            spy.should.have.calledTwice;
+                            spy.should.have.been.calledWith(data);
+                        });
+
+                        it('should skip the root', () => {
+                            spy = sinon.spy();
+                            foos[0].a$.subscribe(spy);
+                            spy.should.have.calledOnce;
+                            spy.should.have.been.calledWith(undefined);
                         });
                     });
+                });
 
-                    it('should have no interference with other route updates', () => {
-                        helper.updateRoute(1, {moz});
-
-                        comp.bar$.subscribe(data => data.should.equals(bar));
+                describe('Root -> First child -> First child', () => {
+                    beforeEach(() => {
+                        subjects[1].next({foa: data})
                     });
 
-                    it('should update the multi-named decorator', () => {
-                        helper.updateRoute(0, fb);
+                    describe('Foo.a$', () => {
+                        it('should send the data to the right routes', () => {
+                            spy = sinon.spy();
+                            foos[2].a$.subscribe(spy);
+                            spy.should.have.calledOnce;
+                            spy.should.have.been.calledWith(data);
 
-                        comp.fb$.subscribe(data => data.should.eql(fb));
-                    });
+                        });
 
-                    it('should update the implicit decorator', () => {
-                        helper.updateRoute(0, {moz});
+                        it('should skip the root', () => {
+                            spy = sinon.spy();
+                            foos.filter((v, i) => i < 2)
+                                .forEach(foo => foo.a$.subscribe(spy));
 
-                        comp.moz$.subscribe(data => data.should.equals(moz));
+                            // Foo receives the data
+                            spy.should.have.calledTwice;
+                            spy.should.have.been.calledWith(undefined);
+                        });
                     });
                 });
             });
 
-            describe('Nested Routes', () => {
+            describe('Multi value route', () => {
+                const data = {id: 2};
+
+                describe('single value', () => {
+                    beforeEach(() => {
+                        subjects[0].next({foa: data})
+                    });
+
+                    it('should have set a value on ab$ of Foo', () => {
+                        spy = sinon.spy();
+                        foos[0].ab$.subscribe(spy);
+                        spy.should.have.been.calledOnce;
+                        spy.should.have.been.calledWith({foa: data});
+                    });
+
+                    it('should not have set a value on ab$ of Bar', () => {
+                        spy = sinon.spy();
+                        bars[0].ab$.subscribe(spy);
+                        spy.should.have.been.calledOnce;
+                        spy.should.have.been.calledWith({});
+                    });
+                });
+
+                describe('multi value (single route)', () => {
+                    const data1 = {id: 3};
+
+                    beforeEach(() => {
+                        subjects[0].next({baa: data, bab: data1});
+                    });
+
+                    it('should have set a value on ab$', () => {
+                        spy = sinon.spy();
+                        bars[1].ab$.subscribe(spy);
+                        spy.should.have.been.calledOnce;
+                        spy.should.have.been.calledWith({baa: data, bab: data1});
+                    });
+
+                    it('should not have set a value on ab$ of Bar', () => {
+                        spy = sinon.spy();
+                        foos[0].ab$.subscribe(spy);
+                        spy.should.have.been.calledOnce;
+                        spy.should.have.been.calledWith({});
+                    });
+                })
+            });
+
+            describe('Implicit value', () => {
+                const data = {id: 4};
+
                 beforeEach(() => {
-                    helper.updateRoute(0, {bar});
-                    helper.updateRoute(1, fb);
-                    helper.updateRoute(2, {moz});
+                    subjects[1].next({foc: data});
                 });
 
-                describe('Propagate updates', () => {
-                    it('should update the named decorator', () => {
-                        comp.bar$.subscribe(data => data.should.equals(bar));
-                    });
-
-                    it('should update the multi-named decorator', () => {
-                        comp.fb$.subscribe(data => data.should.eql(fb));
-                    });
-
-                    it('should update the implicit decorator', () => {
-                        comp.moz$.subscribe(data => data.should.equals(moz));
-                    });
-                });
-            });
-        });
-        describe('As strings', () => {
-            beforeEach(() => {
-                RouteData('bar', {observable: false})(Comp.prototype, 'bar', 0);
-                RouteData('foo', 'baz', {observable: false})(Comp.prototype, 'fb', 0);
-                RouteData({observable: false})(Comp.prototype, 'moz', 0);
-
-                comp.ngOnInit();
-            });
-
-            it('should have called ngOnInit', () => {
-                spy.should.have.been.called;
-            });
-
-            it('should have restored ngOnInit', () => {
-                comp.ngOnInit.should.equals(spy);
-            });
-
-            it('should not have set values for single-value decorators', () => {
-                should.not.exist(comp.bar);
-                should.not.exist(comp.moz);
-            });
-
-            it('should have set an empty object for the multi-value decorators', () => {
-                comp.fb.should.eql({});
-            });
-
-            describe('Root route only', () => {
-                beforeEach(() => {
-                    helper.updateRoute(0, {bar});
-                });
-
-                describe('Propagate updates', () => {
-                    it('should update the named decorator', () => {
-                        comp.bar.should.equals(bar);
-                    });
-
-                    it('should have no interference with other route updates', () => {
-                        helper.updateRoute(1, {moz});
-
-                        comp.bar.should.equals(bar);
-                    });
-
-                    it('should update the multi-named decorator', () => {
-                        helper.updateRoute(0, fb);
-
-                        comp.fb.should.eql(fb);
-                    });
-
-                    it('should update the implicit decorator', () => {
-                        helper.updateRoute(0, {moz});
-
-                        comp.moz.should.equals(moz);
-                    });
-                });
-            });
-
-            describe('Nested Routes', () => {
-                beforeEach(() => {
-                    helper.updateRoute(0, {bar});
-                    helper.updateRoute(1, fb);
-                    helper.updateRoute(2, {moz});
-                });
-
-                describe('Propagate updates', () => {
-                    it('should update the named decorator', () => {
-                        comp.bar.should.equals(bar);
-                    });
-
-                    it('should update the multi-named decorator', () => {
-                        comp.fb.should.eql(fb);
-                    });
-
-                    it('should update the implicit decorator', () => {
-                        comp.moz.should.equals(moz);
-                    });
+                it('should have set the value', () => {
+                    spy = sinon.spy();
+                    foos[1].foc$.subscribe(spy);
+                    spy.should.have.been.calledOnce;
+                    spy.should.have.been.calledWith(data);
                 });
             });
         });
 
         describe('As strings', () => {
             beforeEach(() => {
-                RouteData('bar', {observable: false})(Comp.prototype, 'bar$', 0);
-                RouteData('foo', 'moz', {observable: false})(Comp.prototype, 'foo$', 0);
-                RouteData({observable: false})(Comp.prototype, 'baz$', 0);
+                RoutXxl('foa', {observable: false})(Foo.prototype, 'a$', 0);
+                RoutXxl('foa', 'fob', {observable: false})(Foo.prototype, 'ab$', 0);
+                RoutXxl({observable: false})(Foo.prototype, 'foc', 0);
 
-                comp.ngOnInit();
+                RoutXxl('baa', {observable: false})(Bar.prototype, 'a$', 0);
+                RoutXxl('baa', 'bab', {observable: false})(Bar.prototype, 'ab$', 0);
+                RoutXxl({observable: false})(Bar.prototype, 'bac', 0);
+
+                ({foos, bars, route, spyFoo, spyBar, subjects} = helper.build(property));
+
+                foos.forEach(foo => foo.ngOnInit());
+                bars.forEach(bar => bar.ngOnInit());
             });
 
-            it('should not have a value set yet', () => {
-                should.not.exist(comp.contacts);
+            describe('Implicit value route', () => {
+                beforeEach(() => {
+                    subjects[0].next({foc: 8});
+                });
+
+                it('should have set the value', () => {
+                    foos[0].foc.should.equal(8);
+                });
+            });
+
+            describe('Single value route', () => {
+                beforeEach(() => {
+                    subjects[0].next({foa: 8});
+                });
+
+                it('should have set the value', () => {
+                    foos[0].a$.should.equal(8);
+                });
+
+                it('should have set one value on the multi object', () => {
+                    foos[2].ab$.should.eql({foa: 8});
+                });
+            });
+
+            describe('Multi value route', () => {
+                beforeEach(() => {
+                    subjects[0].next({foa: 8, fob: 9});
+                });
+
+                it('should have set the value', () => {
+                    foos[0].ab$.should.eql({foa: 8, fob: 9});
+                });
+            });
+
+            describe('Value propagation', () => {
+                const data = {foa: 9};
+
+                beforeEach(() => {
+                    subjects[1].next(data);
+                });
+
+                it('should have set the value', () => {
+                    foos[0].ab$.should.eql({});
+                    foos[1].ab$.should.eql(data);
+                    foos[2].ab$.should.eql(data);
+                });
             });
         });
 
-        describe('With ngOnInit-less component', () => {
+        describe('Inherit', () => {
             beforeEach(() => {
-                delete Comp.prototype.ngOnInit;
-                comp = new Comp(route);
+                RoutXxl('foa', {observable: false, inherit: true})(Foo.prototype, 'a$', 0);
+                RoutXxl('foa', 'fob', {observable: false})(Foo.prototype, 'ab$', 0);
+                RoutXxl({inherit: true})(Foo.prototype, 'foc', 0);
+
+                ({foos, bars, route, spyFoo, spyBar, subjects} = helper.build(property));
+
+                foos.forEach(foo => foo.ngOnInit());
+                bars.forEach(bar => bar.ngOnInit());
             });
 
-            it('should throw an error', () => {
-                (function () {
-                    RouteData('bar', {observable: false})(Comp.prototype, 'bar');
-                }).should.throw(`Comp uses the ${property} @decorator without implementing 'ngOnInit'`);
+            describe('As observable', () => {
+                beforeEach(() => {
+                    subjects[1].next({foa: 1, fob: 2, foc: 3});
+                });
+
+                it('should have globally set the values', () => {
+                    foos.forEach(foo => {
+                        foo.a$.should.equal(1);
+                        spy = sinon.spy();
+                        foo.foc.subscribe(spy);
+                        spy.should.have.been.calledWith(3);
+                    });
+
+                    // Not globals
+                    foos[0].ab$.should.eql({});
+                    foos[1].ab$.should.eql({foa: 1, fob: 2});
+                    foos[2].ab$.should.eql({foa: 1, fob: 2});
+
+                });
             });
         });
 
-        describe('Missing ActivatedRoute', () => {
+        describe('Without ngOnInit', () => {
             beforeEach(() => {
-                delete comp.route;
-                comp.constructor = {name: 'BarFoo'};
-
-                RouteData('bar', {observable: false})(comp, 'bar');
+                delete Foo.prototype.ngOnInit;
             });
 
-            xit('should throw an missing route error', () => {
+            it('should throw an missing route error', () => {
                 (function () {
-                    comp.ngOnInit();
-                }).should.throw(`BarFoo uses the ${property} @decorator without a \'route\' property`);
+                    RoutXxl('foa')(Foo.prototype, 'a$', 0);
+                }).should.throw(`Foo uses the ${property} @decorator without implementing 'ngOnInit'`);
+            });
+        });
+
+        describe('Without route', () => {
+            beforeEach(() => {
+                RoutXxl('foa')(Foo.prototype, 'a$', 0);
+            });
+
+            it('should throw an missing route error', () => {
+                (function () {
+                    new Foo(null).ngOnInit();
+                }).should.throw(`Foo uses a route-xxl @decorator without a 'route: ActivatedRoute' property`);
             });
         });
     });
-}
+};
+

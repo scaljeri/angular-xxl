@@ -41,6 +41,7 @@
   },
   "devDependencies": {
     "@types/chai": "^4.0.4",
+    "@types/sinon-chai": "^2.7.29",
     "@types/mocha": "^2.2.43",
     "chai": "^4.1.2",
     "coveralls": "^3.0.0",
@@ -50,8 +51,8 @@
     "sinon": "^4.0.1",
     "sinon-chai": "^2.14.0",
     "stryker": "^0.15.4",
-    "stryker-cli": "^0.1.3",
     "stryker-api": "^0.11.0",
+    "stryker-cli": "^0.1.3",
     "stryker-html-reporter": "^0.11.2",
     "stryker-mocha-framework": "^0.7.1",
     "stryker-mocha-runner": "^0.10.1",
@@ -62,6 +63,5 @@
   "peerDependencies": {
     "@angular/core": "^4.0.0"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }

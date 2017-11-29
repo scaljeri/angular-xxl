@@ -62,7 +62,7 @@ function extractRoutes(parent: any, routeProperty: string, inherit = false): Obs
         parent = parent.parent;
     }
 
-    return routes.length === 1 ? routes[0] : combineLatest(...routes);
+    return routes.length === 1 ? routes[0].pipe(map(value => [value])) : combineLatest(...routes);
 }
 
 /**
@@ -160,7 +160,7 @@ function routeDecoratorFactory(routeProperty, args, extractor): PropertyDecorato
             args = [key.replace(/\$$/, '')];
         }
 
-        // `ngOnInit` should exist on the component, otherwise the decorator will not work with AOT compiler!!
+        // `ngOnInit` should exist on the component, otherwise the decorator will not work with the AOT compiler!!
         if (!prototype.ngOnInit) {
             throw(new Error(`${prototype.constructor.name} uses the ${routeProperty} @decorator without implementing 'ngOnInit'`));
         }
