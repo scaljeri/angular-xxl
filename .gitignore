@@ -1,10 +1,12 @@
 node_modules
 .idea
 bundle
-*.js
+index.js
 index.d.ts
 .DS_Store
 .nyc_output/
 coverage/
 yarn-error.log
 .coveralls.yml
+package-lock.json
+reports/
