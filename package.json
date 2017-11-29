@@ -18,6 +18,7 @@
     "build": "rm -rf bundle && ./node_modules/.bin/tsc && ./node_modules/.bin/tsc -d --lib 'es2015, dom' ./index.ts",
     "prepublish": "yarn build",
     "test": "./node_modules/.bin/nyc mocha",
+    "stryker": "./node_modules/.bin/stryker run",
     "coveralls": "./node_modules/.bin/coveralls < coverage/lcov.info"
   },
   "nyc": {
