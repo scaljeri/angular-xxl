@@ -22,7 +22,7 @@ export function specs(RouteTunnel, should) {
             RouteTunnel()(Foo.prototype, 'tunnel$');
             RouteTunnel()(Bar.prototype, 'tunnel$');
 
-            ({foos, bars, route, spyFoo, spyBar, subjects} = helper.build());
+            ({foos, bars, route, subjects} = helper.build());
 
             foos.forEach((foo, i) => {
                 foo.ngOnInit();

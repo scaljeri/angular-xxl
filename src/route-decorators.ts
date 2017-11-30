@@ -3,41 +3,30 @@ import { map } from 'rxjs/operators';
 import { combineLatest } from 'rxjs/observable/combineLatest';
 import { Subject } from 'rxjs/Subject';
 
-/**
- * The configuration interface used to configure the decorators
- */
+interface XxlPropertyConfig {
+    prototype: any;
+    extractor: (route: any, routeProperty: string, inherit?: boolean) => Observable<any>;
+    args: string[];
+    key: string;
+    routeProperty: string;
+    config: RouteXxlConfig;
+}
+
+interface XxlState {
+    isUsed?: boolean;
+    properties: XxlStateProperty;
+    prototype: any;
+    tunnel$: Subject<any>;
+}
+
+interface XxlStateProperty {
+    args: string[];
+    configs: XxlPropertyConfig[]
+}
+
 export interface RouteXxlConfig {
     observable?: boolean;
     inherit?: boolean;
-}
-
-interface StateItem {
-    args: Array<string>;
-    extractor: (route: any, routeProperty: string, inherit?: boolean) => Observable<any>;
-    maps: { [key: string]: { config: RouteXxlConfig, args: Array<string> } };
-    stream$?: Observable<any>;
-}
-
-interface State {
-    types: { [key: string]: StateItem };
-    ngOnInit: () => void;
-    counter: number;
-    tunnel: Subject<any>;
-
-}
-
-interface StateConfig {
-    args: Array<string>
-    config: RouteXxlConfig;
-    extractor: () => Observable<any>;
-    key: string;
-    routeProperty: string;
-}
-
-interface FakeNgOnInit {
-    (): void;
-
-    _state: State;
 }
 
 /**
@@ -62,7 +51,7 @@ function extractRoutes(parent: any, routeProperty: string, inherit = false): Obs
         parent = parent.parent;
     }
 
-    return routes.length === 1 ? routes[0].pipe(map(value => [value])) : combineLatest(...routes);
+    return combineLatest(...routes);
 }
 
 /**
@@ -93,57 +82,51 @@ function extractValues(args: string[], stream$: Observable<any>): Observable<any
     );
 }
 
-function buildFakeNgOnInit(ngOnInit: () => void): FakeNgOnInit {
-    let fakeNgOnInit = function fake(): void {
-        const state: State = (fake as FakeNgOnInit)._state;
+function replaceNgOnInit(prototype: any): void {
+    const ngOnInit = prototype.ngOnInit;
 
+    prototype.ngOnInit = function xxlFake(): void {
         if (!this.route) {
             throw(new Error(`${this.constructor.name} uses a route-xxl @decorator without a 'route: ActivatedRoute' property`));
         }
 
-        for (let routeProperty in state.types) {
-            const item = state.types[routeProperty];
+        const state: XxlState = this.__xxlState;
+        // state.isUsed = true;
 
-            if (state.types.hasOwnProperty(routeProperty)) {
-                if (!item.stream$) {
-                    item.stream$ = item.extractor(this.route, routeProperty, true);
-                }
+        for (let routeProperty in state.properties) {
+            if (state.properties.hasOwnProperty(routeProperty)) {
+                const items = state.properties[routeProperty];
 
-                for (let key in item.maps) {
+                items.configs.forEach(item => {
                     if (routeProperty === 'tunnel') {
-                        this[key] = state.tunnel;
+                        this[item.key] = state.tunnel$ || (state.tunnel$ = new Subject<any>());
                     } else {
-                        const mapItem = item.maps[key];
-                        const stream$ = extractValues(mapItem.args, (mapItem.config.inherit ? item.stream$ : item.extractor(this.route, routeProperty)));
+                        // build stream
+                        let stream$ = item.extractor(this.route, routeProperty, item.config.inherit);
+                        stream$ = extractValues(item.args, stream$);
 
-                        if (mapItem.config.observable === false) {
+                        if (item.config.observable === false) {
                             stream$.subscribe(data => {
-                                this[key] = data;
+                                this[item.key] = data;
                             });
                         } else {
-                            this[key] = stream$
+                            this[item.key] = stream$
                         }
                     }
-                }
+                });
             }
         }
 
-        this.ngOnInit = ngOnInit;
-        this.ngOnInit();
-    } as FakeNgOnInit;
-
-    fakeNgOnInit._state = {ngOnInit, types: {}, counter: 0, tunnel: new Subject<any>()} as State;
-
-    return fakeNgOnInit;
+        ngOnInit.call(this);
+    };
 }
 
-function updateNgOnInitState(state: State, prop: StateConfig): void {
-    if (!state.types[prop.routeProperty]) {
-        state.types[prop.routeProperty] = {extractor: prop.extractor, args: [], maps: {}} as StateItem;
-    }
+function updateState(state: XxlState, cfg: XxlPropertyConfig): void {
+    let property = state.properties[cfg.routeProperty] ||
+        (state.properties[cfg.routeProperty] = { configs: [], args: [] } as XxlStateProperty);
 
-    state.types[prop.routeProperty].args.push(...prop.args);
-    state.types[prop.routeProperty].maps[prop.key] = {config: prop.config, args: prop.args};
+    property.args.push(...cfg.args.filter(arg => property.args.indexOf(arg) === -1));
+    property.configs.push(cfg);
 }
 
 /**
@@ -155,7 +138,7 @@ function updateNgOnInitState(state: State, prop: StateConfig): void {
 function routeDecoratorFactory(routeProperty, args, extractor): PropertyDecorator {
     const config = (typeof args[args.length - 1] === 'object' ? args.pop() : {}) as RouteXxlConfig;
 
-    return (prototype: { ngOnInit: FakeNgOnInit }, key: string): void => {
+    return (prototype: { ngOnInit: () => void, __xxlState: XxlState }, key: string): void => {
         if (!args.length) {
             args = [key.replace(/\$$/, '')];
         }
@@ -165,12 +148,10 @@ function routeDecoratorFactory(routeProperty, args, extractor): PropertyDecorato
             throw(new Error(`${prototype.constructor.name} uses the ${routeProperty} @decorator without implementing 'ngOnInit'`));
         }
 
-        // Replace ngOnInit only once
-        if (!prototype.ngOnInit._state) {
-            prototype.ngOnInit = buildFakeNgOnInit(prototype.ngOnInit);
-        }
+        let state = prototype.__xxlState || (prototype.__xxlState = { prototype, properties: {} } as XxlState);
 
-        updateNgOnInitState(prototype.ngOnInit._state, {args, config, extractor, key, routeProperty});
+        replaceNgOnInit(prototype);
+        updateState(state, {args, config, extractor, key, prototype, routeProperty});
     };
 }
 

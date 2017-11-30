@@ -65,23 +65,13 @@ export class Bar implements OnInit {
 export function setup() {
     Foo.prototype.ngOnInit = sinon.spy();
     Bar.prototype.ngOnInit = sinon.spy();
+
+    delete Foo.prototype['__xxlState'];
+    delete Bar.prototype['__xxlState'];
 }
 
-export function build(property = 'data'): { foos: Foo[], bars: Bar[], route: Route, spyFoo: () => void, spyBar: () => void, subjects: BehaviorSubject<any>[] } {
+export function build(property = 'data'): {foos: Foo[], bars: Bar[], route: Route, subjects: BehaviorSubject<any>[]} {
     const [route, subjects] = buildRoute(property);
-
-    /*
-    const Foo = function(route) {
-        this.route = route;
-    };
-    */
-
-    /*
-    const Bar = function(route) {
-        this.route = route;
-    };
-    */
-
 
     // Create an instance at each route/parent
     const foos = [];
@@ -94,7 +84,7 @@ export function build(property = 'data'): { foos: Foo[], bars: Bar[], route: Rou
         child = route.firstChild;
     }
 
-    return {foos, bars, route, spyFoo: Foo.prototype.ngOnInit, spyBar: Bar.prototype.ngOnInit, subjects};
+    return {foos, bars, route, subjects};
 }
 
 export function enableQueryParams(route): BehaviorSubject<any> {

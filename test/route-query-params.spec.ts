@@ -10,10 +10,23 @@ export function specs(RouteQueryParams, should) {
 
         beforeEach(() => {
             setup();
+            [spyFoo, spyBar] = [Foo.prototype.ngOnInit, Bar.prototype.ngOnInit];
         });
 
         it('should exist', () => {
             should.exist(RouteQueryParams);
+        });
+
+        describe('Without ngOnInit', () => {
+            beforeEach(() => {
+                delete Foo.prototype.ngOnInit;
+            });
+
+            it('should throw an missing route error', () => {
+                (function () {
+                    RouteQueryParams('foa')(Foo.prototype, 'a$', 0);
+                }).should.throw(`Foo uses the queryParams @decorator without implementing 'ngOnInit'`);
+            });
         });
 
         describe('As observables', () => {
@@ -22,7 +35,7 @@ export function specs(RouteQueryParams, should) {
                 RouteQueryParams('foa', 'fob')(Foo.prototype, 'ab$', 0);
                 RouteQueryParams()(Foo.prototype, 'foc$', 0);
 
-                ({foos, bars, route, spyFoo, spyBar, subjects} = build());
+                ({foos, bars, route, subjects} = build());
                 qp = enableQueryParams(route);
 
                 foos.forEach(foo => foo.ngOnInit());
@@ -83,7 +96,7 @@ export function specs(RouteQueryParams, should) {
                 RouteQueryParams('foa', 'fob', {observable: false})(Foo.prototype, 'ab$', 0);
                 RouteQueryParams({observable: false})(Foo.prototype, 'foc$', 0);
 
-                ({foos, bars, route, spyFoo, spyBar, subjects} = build());
+                ({foos, bars, route, subjects} = build());
                 qp = enableQueryParams(route);
 
                 foos.forEach(foo => foo.ngOnInit());

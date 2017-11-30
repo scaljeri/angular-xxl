@@ -4,44 +4,53 @@ import * as sinon from 'sinon';
 import * as helper from './helpers';
 import { Bar, Foo } from './helpers';
 
-export function specs(RoutXxl, property, should) {
-    describe('xxxxxx', () => {
-        const bar = {}, fb = {foo: 'foo', baz: 'baz'}, moz = {};
-
+export function specs(RouteXxl, property, should) {
+    describe(property, () => {
         let foos: Foo[],
             bars: Bar[],
             spyFoo, spyBar, route, subjects;
 
-        let Comp, spy, comp;
+        let spy;
 
         beforeEach(() => {
             helper.setup();
+            [spyFoo, spyBar] = [Foo.prototype.ngOnInit, Bar.prototype.ngOnInit];
         });
 
         it('should exist', () => {
-            should.exist(RoutXxl);
+            should.exist(RouteXxl);
         });
 
         describe('As observables', () => {
             beforeEach(() => {
-                RoutXxl('foa')(Foo.prototype, 'a$', 0);
-                RoutXxl('foa', 'fob')(Foo.prototype, 'ab$', 0);
-                RoutXxl()(Foo.prototype, 'foc$', 0);
+                RouteXxl('foa')(Foo.prototype, 'a$', 0);
+                RouteXxl('foa', 'fob')(Foo.prototype, 'ab$', 0);
+                RouteXxl()(Foo.prototype, 'foc$', 0);
 
-                RoutXxl('baa')(Bar.prototype, 'a$', 0);
-                RoutXxl('baa', 'bab')(Bar.prototype, 'ab$', 0);
-                RoutXxl()(Bar.prototype, 'bac$', 0);
+                RouteXxl('baa')(Bar.prototype, 'a$', 0);
+                RouteXxl('baa', 'bab')(Bar.prototype, 'ab$', 0);
+                RouteXxl()(Bar.prototype, 'bac$', 0);
 
-                ({foos, bars, route, spyFoo, spyBar, subjects} = helper.build(property));
+                ({foos, bars, route, subjects} = helper.build(property));
 
                 foos.forEach(foo => foo.ngOnInit());
                 bars.forEach(bar => bar.ngOnInit());
             });
 
-            it('should have called the original ngOnInit for each instance', () => {
-                foos[0].ngOnInit.should.have.callCount(3);
-                bars[0].ngOnInit.should.have.calledThrice;
+            it('should have replaced ngOnInit', () => {
+               foos[0].should.not.equal(spyFoo);
             });
+
+            it('should have called called the spy for each instance', () => {
+                spyFoo.should.have.callCount(3);
+                spyBar.should.have.calledThrice;
+            });
+
+            it('should have replaced ngOnInit permanently', () => {
+               Foo.prototype.ngOnInit.should.not.equal(spyFoo);
+            });
+
+
 
             it('should have bind all observables', () => {
                 for (let i = 0; i < 3; i++) {
@@ -219,15 +228,15 @@ export function specs(RoutXxl, property, should) {
 
         describe('As strings', () => {
             beforeEach(() => {
-                RoutXxl('foa', {observable: false})(Foo.prototype, 'a$', 0);
-                RoutXxl('foa', 'fob', {observable: false})(Foo.prototype, 'ab$', 0);
-                RoutXxl({observable: false})(Foo.prototype, 'foc', 0);
+                RouteXxl('foa', {observable: false})(Foo.prototype, 'a$', 0);
+                RouteXxl('foa', 'fob', {observable: false})(Foo.prototype, 'ab$', 0);
+                RouteXxl({observable: false})(Foo.prototype, 'foc', 0);
 
-                RoutXxl('baa', {observable: false})(Bar.prototype, 'a$', 0);
-                RoutXxl('baa', 'bab', {observable: false})(Bar.prototype, 'ab$', 0);
-                RoutXxl({observable: false})(Bar.prototype, 'bac', 0);
+                RouteXxl('baa', {observable: false})(Bar.prototype, 'a$', 0);
+                RouteXxl('baa', 'bab', {observable: false})(Bar.prototype, 'ab$', 0);
+                RouteXxl({observable: false})(Bar.prototype, 'bac', 0);
 
-                ({foos, bars, route, spyFoo, spyBar, subjects} = helper.build(property));
+                ({foos, bars, route, subjects} = helper.build(property));
 
                 foos.forEach(foo => foo.ngOnInit());
                 bars.forEach(bar => bar.ngOnInit());
@@ -284,11 +293,11 @@ export function specs(RoutXxl, property, should) {
 
         describe('Inherit', () => {
             beforeEach(() => {
-                RoutXxl('foa', {observable: false, inherit: true})(Foo.prototype, 'a$', 0);
-                RoutXxl('foa', 'fob', {observable: false})(Foo.prototype, 'ab$', 0);
-                RoutXxl({inherit: true})(Foo.prototype, 'foc', 0);
+                RouteXxl('foa', {observable: false, inherit: true})(Foo.prototype, 'a$', 0);
+                RouteXxl('foa', 'fob', {observable: false})(Foo.prototype, 'ab$', 0);
+                RouteXxl({inherit: true})(Foo.prototype, 'foc', 0);
 
-                ({foos, bars, route, spyFoo, spyBar, subjects} = helper.build(property));
+                ({foos, bars, route, subjects} = helper.build(property));
 
                 foos.forEach(foo => foo.ngOnInit());
                 bars.forEach(bar => bar.ngOnInit());
@@ -323,14 +332,14 @@ export function specs(RoutXxl, property, should) {
 
             it('should throw an missing route error', () => {
                 (function () {
-                    RoutXxl('foa')(Foo.prototype, 'a$', 0);
+                    RouteXxl('foa')(Foo.prototype, 'a$', 0);
                 }).should.throw(`Foo uses the ${property} @decorator without implementing 'ngOnInit'`);
             });
         });
 
         describe('Without route', () => {
             beforeEach(() => {
-                RoutXxl('foa')(Foo.prototype, 'a$', 0);
+                RouteXxl('foa')(Foo.prototype, 'a$', 0);
             });
 
             it('should throw an missing route error', () => {
