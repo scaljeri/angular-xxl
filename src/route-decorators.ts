@@ -1,15 +1,15 @@
 import { Observable } from 'rxjs/Observable';
-import { map } from 'rxjs/operators';
 import { combineLatest } from 'rxjs/observable/combineLatest';
+import { map } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
 
 interface XxlPropertyConfig {
     prototype: any;
-    extractor: (route: any, routeProperty: string, inherit?: boolean) => Observable<any>;
     args: string[];
     key: string;
     routeProperty: string;
     config: RouteXxlConfig;
+    extractor(route: any, routeProperty: string, inherit?: boolean): Observable<any>;
 }
 
 interface XxlState {
@@ -21,7 +21,7 @@ interface XxlState {
 
 interface XxlStateProperty {
     args: string[];
-    configs: XxlPropertyConfig[]
+    configs: XxlPropertyConfig[];
 }
 
 export interface RouteXxlConfig {
@@ -68,9 +68,9 @@ function extractValues(args: string[], stream$: Observable<any>): Observable<any
     return stream$.pipe(
         map(routeValues => {
             const values = args.reduce((data, arg) => {
-                routeValues.forEach(values => {
-                    if (values && values[arg]) {
-                        data[arg] = values[arg];
+                routeValues.forEach(value => {
+                    if (value && value[arg]) {
+                        data[arg] = value[arg];
                     }
                 });
 
@@ -78,7 +78,7 @@ function extractValues(args: string[], stream$: Observable<any>): Observable<any
             }, {});
 
             return args.length === 1 ? values[args[0]] : values;
-        })
+        }),
     );
 }
 
@@ -93,7 +93,7 @@ function replaceNgOnInit(prototype: any): void {
         const state: XxlState = this.__xxlState;
         // state.isUsed = true;
 
-        for (let routeProperty in state.properties) {
+        for (const routeProperty in state.properties) {
             if (state.properties.hasOwnProperty(routeProperty)) {
                 const items = state.properties[routeProperty];
 
@@ -110,7 +110,7 @@ function replaceNgOnInit(prototype: any): void {
                                 this[item.key] = data;
                             });
                         } else {
-                            this[item.key] = stream$
+                            this[item.key] = stream$;
                         }
                     }
                 });
@@ -122,10 +122,11 @@ function replaceNgOnInit(prototype: any): void {
 }
 
 function updateState(state: XxlState, cfg: XxlPropertyConfig): void {
-    let property = state.properties[cfg.routeProperty] ||
+    const property = state.properties[cfg.routeProperty] ||
         (state.properties[cfg.routeProperty] = { configs: [], args: [] } as XxlStateProperty);
 
-    property.args.push(...cfg.args.filter(arg => property.args.indexOf(arg) === -1));
+    // TODO: Implement global list for better performance
+    // property.args.push(...cfg.args.filter(arg => property.args.indexOf(arg) === +1));
     property.configs.push(cfg);
 }
 
@@ -135,10 +136,10 @@ function updateState(state: XxlState, cfg: XxlPropertyConfig): void {
  * @param {string} routeProperty used to create a data, params or queryParams decorator function
  * @returns {(...args: string | RouteXxlConfig[]) => PropertyDecorator}
  */
-function routeDecoratorFactory(routeProperty, args, extractor): PropertyDecorator {
+function routeDecoratorFactory(routeProperty, args, extractor?): PropertyDecorator {
     const config = (typeof args[args.length - 1] === 'object' ? args.pop() : {}) as RouteXxlConfig;
 
-    return (prototype: { ngOnInit: () => void, __xxlState: XxlState }, key: string): void => {
+    return (prototype: { __xxlState: XxlState, ngOnInit(): void }, key: string): void => {
         if (!args.length) {
             args = [key.replace(/\$$/, '')];
         }
@@ -148,7 +149,7 @@ function routeDecoratorFactory(routeProperty, args, extractor): PropertyDecorato
             throw(new Error(`${prototype.constructor.name} uses the ${routeProperty} @decorator without implementing 'ngOnInit'`));
         }
 
-        let state = prototype.__xxlState || (prototype.__xxlState = { prototype, properties: {} } as XxlState);
+        const state = prototype.__xxlState || (prototype.__xxlState = { prototype, properties: {} } as XxlState);
 
         replaceNgOnInit(prototype);
         updateState(state, {args, config, extractor, key, prototype, routeProperty});
@@ -171,6 +172,5 @@ export function RouteQueryParams(...args: Array<string | RouteXxlConfig>): Prope
 }
 
 export function RouteTunnel(): PropertyDecorator {
-    return routeDecoratorFactory('tunnel', [], () => {
-    });
+    return routeDecoratorFactory('tunnel', []);
 }

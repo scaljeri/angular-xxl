@@ -20,7 +20,7 @@
     "test": "./node_modules/.bin/nyc mocha",
     "stryker": "./node_modules/.bin/stryker run",
     "coveralls": "./node_modules/.bin/coveralls < coverage/lcov.info",
-    "lint": "./node_modules/.bin/tslint -c tslint.json -p tsconfig.json 'src/*.ts' 'test/*.ts'"
+    "lint": "./node_modules/.bin/tslint -c tslint.json -p tsconfig.json 'src/*.ts'"
   },
   "nyc": {
     "include": [
