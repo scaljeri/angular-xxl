@@ -107,7 +107,7 @@ function replaceNgOnInit(prototype: any): void {
 
                         if (item.config.observable === false) {
                             stream$.subscribe(data => {
-                                this[item.key] = data;
+                                if (data != null) this[item.key] = data;
                             });
                         } else {
                             this[item.key] = stream$;
