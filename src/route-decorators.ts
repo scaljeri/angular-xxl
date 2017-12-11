@@ -168,7 +168,8 @@ export function RouteParams(...args: Array<string | RouteXxlConfig>): PropertyDe
 }
 
 export function RouteQueryParams(...args: Array<string | RouteXxlConfig>): PropertyDecorator {
-    return routeDecoratorFactory('queryParams', args, route => route.queryParams.pipe(map(params => [params])));
+    return routeDecoratorFactory('queryParams', args,
+            route => route.queryParams.pipe(map(params => [params])));
 }
 
 export function RouteTunnel(): PropertyDecorator {
