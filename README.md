@@ -136,6 +136,27 @@ The tunnel-decorator is not limited to sibling components only, it can also go s
 If you want to see this in action, go to the [demo](https://stackblitz.com/edit/angular-route-xxl?file=app%2Ffoo-bar%2Ffoo-bar.component.ts)
 and click on a route. The ripple effect is just that!
 
+### Route Pipes
+You may want to filter and/or map values in the route params/data. This can be done using the `map` and `filter` config options.
+
+Filter example:
+
+```typescript
+@RouteQueryParams('search', { observable: false, filter: val => val !== '' }) search: string;
+// search query param changes to 'hello world'
+console.log(this.search) // logs 'hello world'
+// search query param changes to ''
+console.log(this.search) // logs 'hello world'
+```
+
+Map example:
+
+```typescript
+@RouteData('count', { observable: false, map: val => val * 2 }) count: number;
+// search query param changes to 5
+console.log(this.count) // logs 10
+```
+
 ### Contributors
    + @dirkluijk - Suggested to solve the issue using decorators
-   + @superMDguy - Added `@RouteQueryParams()` and an option to return actual values instead of Observables
+   + @superMDguy - Added `@RouteQueryParams()`, an option to return actual values instead of Observables, and route pipes.
