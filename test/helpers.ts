@@ -62,6 +62,7 @@ export class Bar implements OnInit {
     ngOnInit(): void {}
 }
 
+// Cleanup
 export function setup() {
     Foo.prototype.ngOnInit = sinon.spy();
     Bar.prototype.ngOnInit = sinon.spy();

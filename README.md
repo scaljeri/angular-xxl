@@ -100,6 +100,24 @@ If you turn inheritance on
 are globally accessible. In the [demo](https://stackblitz.com/edit/angular-route-xxl?file=app%2Ffoo-bar%2Ffoo-bar.component.ts)
 you can see this in action if you click `Inherit Routes`. This can be used for all three decorators.
 
+### Lettable operators
+This option lets you apply any lettable operator, like `filer` or `map` on the the route data, params and query-params before 
+they propagates to your application. 
+
+For example, if you need to ignore empty query params
+
+```typescript
+@RouteQueryParams('search', { observable: false, pipe: [filter(val => val !== '')] }) search: string;
+```
+
+or if values need to be transformed
+
+```typescript
+@RouteData('count', { observable: false, pipe: [map(val => val * 2) }) count: number;
+```
+
+Because it is an array, multiple lettable operators can be added, and will be executed in that same order.
+
 ### RouteTunnel
 This decorator is different from the other three, it allows you to setup communication between instances of the same 
 components/class.
@@ -136,27 +154,11 @@ The tunnel-decorator is not limited to sibling components only, it can also go s
 If you want to see this in action, go to the [demo](https://stackblitz.com/edit/angular-route-xxl?file=app%2Ffoo-bar%2Ffoo-bar.component.ts)
 and click on a route. The ripple effect is just that!
 
-### Route Pipes
-You may want to filter and/or map values in the route params/data. This can be done using the `map` and `filter` config options.
+### Angular 5.2
+Angular now supports [`paramsInheritanceStrategy`](https://blog.angular.io/angular-5-2-now-available-312d1099bd81), it can be set to `always`, meaning child routes will have access to all ancestor parameters 
+and data.
 
-Filter example:
-
-```typescript
-@RouteQueryParams('search', { observable: false, filter: val => val !== '' }) search: string;
-// search query param changes to 'hello world'
-console.log(this.search) // logs 'hello world'
-// search query param changes to ''
-console.log(this.search) // logs 'hello world'
-```
-
-Map example:
-
-```typescript
-@RouteData('count', { observable: false, map: val => val * 2 }) count: number;
-// search query param changes to 5
-console.log(this.count) // logs 10
-```
 
 ### Contributors
    + @dirkluijk - Suggested to solve the issue using decorators
-   + @superMDguy - Added `@RouteQueryParams()`, an option to return actual values instead of Observables, and route pipes.
+   + @superMDguy - Added `@RouteQueryParams()` and an option to return actual values instead of Observables
