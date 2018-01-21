@@ -7,9 +7,10 @@ chai.use(sinonChai);
 
 import { RouteData, RouteParams, RouteQueryParams, RouteTunnel } from '../src/route-decorators';
 
+import { hostElementSpecs } from './host-element.spec';
 import { specs as dataParamSpecs } from './route-data-params.spec';
-import { specs as queryParamSpecs } from './route-query-params.spec';
 import { specs as pipeSpecs } from './route-pipe.spec';
+import { specs as queryParamSpecs } from './route-query-params.spec';
 import { specs as tunnelSpecs } from './route-tunnel.spec';
 
 dataParamSpecs(RouteData, 'data', should);
@@ -17,4 +18,6 @@ dataParamSpecs(RouteParams, 'params', should);
 queryParamSpecs(RouteQueryParams, should);
 pipeSpecs(RouteQueryParams, should);
 tunnelSpecs(RouteTunnel, should);
+
+hostElementSpecs(should);
 
