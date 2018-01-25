@@ -5,6 +5,8 @@ import * as chai from 'chai';
 const should = chai.should();
 chai.use(sinonChai);
 
+global.window = {};
+
 import { RouteData, RouteParams, RouteQueryParams, RouteTunnel } from '../src/route-decorators';
 
 import { hostElementSpecs } from './host-element.spec';
@@ -20,4 +22,3 @@ pipeSpecs(RouteQueryParams, should);
 tunnelSpecs(RouteTunnel, should);
 
 hostElementSpecs(should);
-

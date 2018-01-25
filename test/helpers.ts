@@ -1,25 +1,24 @@
-import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import * as sinon from 'sinon';
+import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-
+import * as sinon from 'sinon';
 
 export interface Route {
     data?: any;
-    params?: Observable<{[key: string]: string}>;
-    queryParams?: Observable<{[key: string]: string}>;
+    params?: Observable<{ [key: string]: string }>;
+    queryParams?: Observable<{ [key: string]: string }>;
     parent?: Route;
     firstChild?: Route;
 }
 
 interface OnInit {
-    ngOnInit: () => void;
+    ngOnInit(): void;
 }
 
 let route: Route;
 let subjects: Array<BehaviorSubject<any>>;
 
-function buildRoute(property): any   {
+function buildRoute(property): any {
     subjects = [new BehaviorSubject(null), new BehaviorSubject(null), new BehaviorSubject(null)];
 
     route = {
@@ -28,8 +27,8 @@ function buildRoute(property): any   {
             [property]: subjects[1].asObservable(),
             firstChild: {
                 [property]: subjects[2].asObservable(),
-            } as Route
-        } as Route
+            } as Route,
+        } as Route,
     };
 
     route.firstChild.parent = route;
@@ -43,27 +42,35 @@ export function updateRoute(level, data): void {
 }
 
 export class Foo implements OnInit {
-    public a$: Observable<any>;
-    public ab$: Observable<any>;
-    public foc$: Observable<any>;
-    public foc: any;
-    public tunnel$: Subject<any>;
-    constructor(public route: any) {}
-    ngOnInit(): void {}
+    a$: Observable<any>;
+    ab$: Observable<any>;
+    foc$: Observable<any>;
+    foc: any;
+    tunnel$: Subject<any>;
+
+    constructor(private route: any) {
+    }
+
+    ngOnInit(): void {
+    }
 }
 
 export class Bar implements OnInit {
-    public a$: Observable<any>;
-    public ab$: Observable<any>;
-    public bac$: Observable<any>;
-    public bac: any;
-    public tunnel$: Subject<any>;
-    constructor(public route: any) {}
-    ngOnInit(): void {}
+    a$: Observable<any>;
+    ab$: Observable<any>;
+    bac$: Observable<any>;
+    bac: any;
+    tunnel$: Subject<any>;
+
+    constructor(public route: any) {
+    }
+
+    ngOnInit(): void {
+    }
 }
 
 // Cleanup
-export function setup() {
+export function setup(): void {
     Foo.prototype.ngOnInit = sinon.spy();
     Bar.prototype.ngOnInit = sinon.spy();
 
@@ -71,28 +78,28 @@ export function setup() {
     delete Bar.prototype['__xxlState'];
 }
 
-export function build(property = 'data'): {foos: Foo[], bars: Bar[], route: Route, subjects: BehaviorSubject<any>[]} {
-    const [route, subjects] = buildRoute(property);
+export function build(property = 'data'): { foos: Foo[], bars: Bar[], route: Route, subjects: BehaviorSubject<any>[] } {
+    const [r, subs] = buildRoute(property);
 
     // Create an instance at each route/parent
     const foos = [];
     const bars = [];
-    let child = route;
-    for( let i = 0; i < 3; i++) {
-        foos.push( new Foo(child));
-        bars.push( new Bar(child));
+    let child = r;
+    for (let i = 0; i < 3; i++) {
+        foos.push(new Foo(child));
+        bars.push(new Bar(child));
 
-        child = route.firstChild;
+        child = child.firstChild;
     }
 
-    return {foos, bars, route, subjects};
+    return {foos, bars, route: r, subjects: subs};
 }
 
 export function enableQueryParams(route): BehaviorSubject<any> {
     const subject = new BehaviorSubject(null);
 
     let child = route;
-    while(child) {
+    while (child) {
         child.queryParams = subject.asObservable();
 
         child = child.firstChild;
@@ -100,4 +107,3 @@ export function enableQueryParams(route): BehaviorSubject<any> {
 
     return subject;
 }
-

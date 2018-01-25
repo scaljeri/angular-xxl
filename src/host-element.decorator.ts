@@ -1,7 +1,24 @@
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
-import { map } from 'rxjs/operators';
-import ResizeObserver from 'resize-observer-polyfill';
+import { map, filter } from 'rxjs/operators';
+
+declare global {
+    interface Window { ResizeObserver: any; }
+}
+
+export interface ResizeObserver {
+    observe(target: HTMLElement): void;
+    disconnect(): void;
+}
+
+interface Proto {
+    ngOnInit(): void;
+    ngOnDestroy(): void;
+}
+
+interface ResizeObserverEntry {
+    contentRect: { width: number, height: number };
+}
 
 export interface HostElementConfig {
     pipe?: any[];
@@ -10,34 +27,47 @@ export interface HostElementConfig {
 }
 
 export function HostElement(...args: Array<string | HostElementConfig>): PropertyDecorator {
-    const config = (typeof args[args.length - 1] === 'object' ? args.pop() : {}) as HostElementConfig,
+    const config = (typeof args[args.length - 1] === 'object' ? args.pop() : {}) as HostElementConfig;
 
-        return function factory(proto: { ngOnInit(): void, ngOnDestroy }, key: any): void {
+    return function factory(proto: Proto, key: string): void {
         const ngOnInit = proto.ngOnInit;
         const ngOnDestroy = proto.ngOnDestroy;
         let observer: ResizeObserver;
 
-        const property = args.shift() as string || key;
-
-        proto.ngOnInit = function (): void {
+        const properties = (args.length > 0 ? args : [key.replace(/\$$/, '')]) as Array<string>;
+        proto.ngOnInit = function(): void {
             const target = config.selector ? this.element.nativeElement.querySelector(config.selector) : this.element.nativeElement;
-            const updates = new BehaviorSubject<ResizeObserverEntry[]>([]);
+            const updates = new BehaviorSubject<any>((args.length > 1 ? {} : null));
 
             setTimeout(() => {
-                observer = new ResizeObserver((entries: ResizeObserverEntry[]) => updates.next(entries));
+                observer = new window.ResizeObserver((entries: ResizeObserverEntry[]) => updates.next(entries));
                 observer.observe(target);
             });
 
-            const updates$: Observable<number> = updates.pipe(
+            const updates$: Observable<any> = updates.pipe(
+                filter(entries => !!entries),
                 map((entries: ResizeObserverEntry[]) => {
-                    return entries.length ? parseFloat(entries[0].contentRect[property]) : null;
-                })
+                    return entries.length ? entries[0].contentRect : (properties.length > 1 ? {} : null);
+                }),
+                filter(value => value !== null),
+                map(contentRect => { // extract values
+                    return properties.reduce((list, arg: string) => {
+                        list[arg] = contentRect[arg];
+
+                        return properties.length > 1 ? list : list[arg];
+                    }, {});
+                }),
+                ...(config.pipe || []),
             );
 
             if (config.observable) {
                 this[key] = updates$;
             } else {
-                updates$.subscribe((value: number) => {
+                if (properties.length > 1) {
+                    this[key] = {};
+                }
+
+                updates$.subscribe(value => {
                     this[key] = value;
                 });
             }
@@ -45,9 +75,9 @@ export function HostElement(...args: Array<string | HostElementConfig>): Propert
             ngOnInit.call(this);
         };
 
-        proto.ngOnDestroy = function (): void {
+        proto.ngOnDestroy = function(): void {
             observer.disconnect();
             ngOnDestroy.call(this);
-        }
+        };
     };
 }

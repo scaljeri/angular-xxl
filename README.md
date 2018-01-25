@@ -1,5 +1,8 @@
 https://stackoverflow.com/questions/6492683/how-to-detect-divs-dimension-changed
+https://stackblitz.com/edit/host-element?file=app%2Futils%2Fhost-element.decorator.ts
 https://stackblitz.com/edit/host-element?file=app%2Ffoobar%2Ffoobar.component.ts
+
+https://stackblitz.com/edit/host-element?file=app%2Fapp.component.html
 
 This library provides four decorators: **@RouteData**, **@RouteParams**, **@RouteQueryParams** and **@RouteTunnel**. The first three 
 extract the resolved data, route parameters and query parameters values respectively using the `ActivatedRoute`. 
