@@ -1,6 +1,7 @@
+import { Observable } from 'rxjs/Observable';
+import { filter, map } from 'rxjs/operators';
 import * as sinon from 'sinon';
 import { HostElement, ResizeObserver } from '../src/host-element.decorator';
-import { Observable } from 'rxjs/Observable';
 
 declare global {
     interface ResizeObserver { cbs: [any]; }
@@ -18,13 +19,13 @@ function triggerChange(width, height, instance, index?): void {
 }
 
 export function hostElementSpecs(should): void {
-    describe.only('HostElement', () => {
+    describe('HostElement', () => {
         let instance: ResizeObserver, Component, clock, element, comp;
-        let ngOnInitSpy, ngOnDestroySpy,
+        let ngOnInitSpy, ngOnDestroySpy, querySelectorSpy,
             observeSpy, disconnectSpy;
 
         beforeEach(() => {
-            element = {nativeElement: {}};
+            element = {nativeElement: {querySelector: () => {}}};
             clock = sinon.useFakeTimers();
             Component = function() {
                 this.element = element;
@@ -42,6 +43,7 @@ export function hostElementSpecs(should): void {
             };
             instance['cbs'] = [];
 
+            querySelectorSpy = sinon.spy(element.nativeElement, 'querySelector');
             ngOnInitSpy = sinon.spy(Component.prototype, 'ngOnInit');
             ngOnDestroySpy = sinon.spy(Component.prototype, 'ngOnDestroy');
             observeSpy = sinon.spy(instance, 'observe');
@@ -218,11 +220,56 @@ export function hostElementSpecs(should): void {
             });
 
             describe('Using a selector', () => {
+                beforeEach(() => {
+                    HostElement('height', { selector: '.foo'})(Component.prototype, 'h');
+                    comp = new Component();
+                    comp.ngOnInit();
+                    clock.tick();
+                });
+
+                it('should have queried for the inner element', () => {
+                    querySelectorSpy.should.have.been.calledWith('.foo');
+                });
 
             });
 
             describe('Using a pipe', () => {
+                beforeEach(() => {
+                    HostElement('height', 'width', { observable: false, pipe: [
+                        map((wh: any) => {
+                            wh.width += 1;
+                            wh.height += 2;
 
+                            return wh;
+                        }),
+                        filter((wh: any) => wh.width < 20),
+                        ]})(Component.prototype, 'wh');
+
+                    comp = new Component();
+                    comp.ngOnInit();
+                    clock.tick();
+                });
+
+                describe('Trigger change passing filter', () => {
+                    beforeEach(() => {
+                        triggerChange(8, 18, instance, 0);
+                    });
+
+                    it('should updated the wh value', () => {
+                        comp.wh.should.eql({width: 9, height: 20});
+                    });
+                });
+
+                describe('Trigger change failing filter', () => {
+                    beforeEach(() => {
+                        triggerChange(2, 5, instance, 0);
+                        triggerChange(19, 18, instance, 0);
+                    });
+
+                    it('should updated the wh value', () => {
+                        comp.wh.should.eql({width: 3, height: 7});
+                    });
+                });
             });
         });
     });
