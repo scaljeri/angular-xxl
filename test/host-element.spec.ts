@@ -3,10 +3,6 @@ import { filter, map } from 'rxjs/operators';
 import * as sinon from 'sinon';
 import { HostElement, ResizeObserver } from '../src/host-element.decorator';
 
-declare global {
-    interface ResizeObserver { cbs: [any]; }
-}
-
 function triggerChange(width, height, instance, index?): void {
     const entries = [{contentRect: {width, height}}];
 
