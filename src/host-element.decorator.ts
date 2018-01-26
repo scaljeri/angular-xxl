@@ -1,6 +1,6 @@
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
-import { map, filter } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 
 declare global {
     interface Window { ResizeObserver: any; }
@@ -60,9 +60,7 @@ export function HostElement(...args: Array<string | HostElementConfig>): Propert
                 ...(config.pipe || []),
             );
 
-            if (config.observable) {
-                this[key] = updates$;
-            } else {
+            if (config.observable === false) {
                 if (properties.length > 1) {
                     this[key] = {};
                 }
@@ -70,6 +68,8 @@ export function HostElement(...args: Array<string | HostElementConfig>): Propert
                 updates$.subscribe(value => {
                     this[key] = value;
                 });
+            } else {
+                this[key] = updates$;
             }
 
             ngOnInit.call(this);
