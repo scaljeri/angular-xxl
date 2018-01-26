@@ -1,6 +1,8 @@
+import * as chai from 'chai';
 import 'mocha';
 import * as sinonChai from 'sinon-chai';
-import * as chai from 'chai';
+
+declare var global: any;
 
 const should = chai.should();
 chai.use(sinonChai);
