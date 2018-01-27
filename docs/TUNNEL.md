@@ -1,5 +1,4 @@
 ## @Tunnel
-
 This decorator allows you to setup communication between instances of the same components/class.
 
 For example, consider the following sibling components
@@ -9,12 +8,12 @@ For example, consider the following sibling components
    <app-foo></app-foo>
 ```
  
-If, for whatever reason, you want them to be able to communicate using `@RouteTunnel` do
+If you want them to be able to communicate using `@Tunnel` do
 
 ```typescript
     @Component({ ... })
     export class FooComponent implements ngOnInit {
-        @RouteTunnel() tunnel$;
+        @Tunnel() tunnel$;
         
         constructor(private route: ActivatedRoute) {}
         
@@ -30,6 +29,8 @@ If, for whatever reason, you want them to be able to communicate using `@RouteTu
     }
 ```
 
-The tunnel-decorator is not limited to sibling components only, it can also go straight through routes!
+Note: It is required that the component has the `ActivatedRoute` as `route` and `ngOnInit` implemented
+
+This decorator is not limited to sibling communication only, it goes straight through all routes!
 If you want to see this in action, go to the [demo](https://stackblitz.com/edit/angular-route-xxl?file=app%2Ffoo-bar%2Ffoo-bar.component.ts)
-and click on a route. The ripple effect is just that!
+and click on a route. The ripple effect is just caused by this decorator!

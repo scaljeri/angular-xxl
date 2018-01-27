@@ -12,10 +12,14 @@ The following decorators are available
   *  [@HostElement](docs/HOST_ELEMENT.md)
   *  [@Tunnel](docs/TUNNEL.md)
   
+And they can be install with the following command
+
+    $> yarn add angular-xxl
+    
 Below is a short description of each `@decorator`
 
 ### @HostElement
-This decorator monitors the dimentions (width/height) of the host element or its child elements.
+This decorator monitors dimensions (width/height) of elements; The root element and/or any of its children
 
 ```typescript
     @HostElement('width') width$: Observable<number>;
@@ -23,7 +27,8 @@ This decorator monitors the dimentions (width/height) of the host element or its
     @HostElement('height', 'width'}) size$: Observable<{height: number, width: number};
 ```
 
-[More](docs/HOST_ELEMENT.md)
+[Read more](docs/HOST_ELEMENT.md)
+[DEMO](https://stackblitz.com/edit/host-element?file=app%2Fnormal%2Fnormal.component.ts)
 
 ### @RouteData / @RouteParams / @RouteQueryParams
 These decorators let you access the router's data, params and queryParams easily with just one line of code. 
@@ -53,7 +58,7 @@ There is some flexibility in how the data is received in the component which is 
 ### Tunnel
 This decorator allows you to setup communication between instances of the same components/class.
 
-[More](docs/TUNNEL.md)
+[Read more](docs/TUNNEL.md)
 
 ### Bookmarks
   * Small polyfill: https://stackoverflow.com/questions/6492683/how-to-detect-divs-dimension-changed
