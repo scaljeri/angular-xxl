@@ -17,13 +17,12 @@ function triggerChange(width, height, instance, index?): void {
 export function hostElementSpecs(should): void {
     describe('HostElement', () => {
         let instance: ResizeObserver, Component, clock, element, comp;
-        let ngOnInitSpy, ngOnDestroySpy, querySelectorSpy,
-            observeSpy, disconnectSpy;
+        let ngOnInitSpy, ngOnDestroySpy;
 
         beforeEach(() => {
-            element = {nativeElement: {querySelector: () => {}}};
+            element = {nativeElement: {querySelector: sinon.spy()}};
             clock = sinon.useFakeTimers();
-            Component = function() {
+            Component = function(): void  {
                 this.element = element;
             };
             Component.prototype = {
@@ -32,18 +31,13 @@ export function hostElementSpecs(should): void {
             };
 
             instance = {
-                observe: () => {
-                },
-                disconnect: () => {
-                },
+                observe: sinon.spy(),
+                disconnect: sinon.spy(),
             };
             instance['cbs'] = [];
 
-            querySelectorSpy = sinon.spy(element.nativeElement, 'querySelector');
             ngOnInitSpy = sinon.spy(Component.prototype, 'ngOnInit');
             ngOnDestroySpy = sinon.spy(Component.prototype, 'ngOnDestroy');
-            observeSpy = sinon.spy(instance, 'observe');
-            disconnectSpy = sinon.spy(instance, 'disconnect');
 
             window.ResizeObserver = (cb) => {
                 instance['cbs'].push(cb);
@@ -79,7 +73,7 @@ export function hostElementSpecs(should): void {
                 });
 
                 it('should have set the target to be observed', () => {
-                    observeSpy.should.have.been.calledWith(element.nativeElement);
+                    instance.observe.should.have.been.calledWith(element.nativeElement);
                 });
 
                 it('should have eventually called the original ngOnInit once', () => {
@@ -90,7 +84,7 @@ export function hostElementSpecs(should): void {
                     comp.ngOnDestroy();
 
                     ngOnDestroySpy.should.have.been.calledOnce;
-                    disconnectSpy.should.have.been.calledTwice;
+                    instance.disconnect.should.have.been.calledTwice;
                 });
 
                 describe('Trigger change', () => {
@@ -224,7 +218,7 @@ export function hostElementSpecs(should): void {
                 });
 
                 it('should have queried for the inner element', () => {
-                    querySelectorSpy.should.have.been.calledWith('.foo');
+                    element.nativeElement.querySelector.should.have.been.calledWith('.foo');
                 });
 
             });
