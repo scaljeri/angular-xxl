@@ -1,14 +1,4 @@
-https://stackoverflow.com/questions/6492683/how-to-detect-divs-dimension-changed
-https://stackblitz.com/edit/host-element?file=app%2Futils%2Fhost-element.decorator.ts
-https://stackblitz.com/edit/host-element?file=app%2Ffoobar%2Ffoobar.component.ts
-
-https://stackblitz.com/edit/host-element?file=app%2Fapp.component.html
-
-This library provides four decorators: **@RouteData**, **@RouteParams**, **@RouteQueryParams** and **@RouteTunnel**. The first three 
-extract the resolved data, route parameters and query parameters values respectively using the `ActivatedRoute`. 
-
-All decorators require that the `ActivatedRoute` is injected in the component's constructor as `route` and
-that the component has the `ngOnInit` function defined. 
+This library contains a couple of decorators which provide useful functionality for angular components. 
 
 [![CircleCI](https://circleci.com/gh/scaljeri/angular-route-xxl.svg?style=svg)](https://circleci.com/gh/scaljeri/angular-route-xxl)
 [![Coverage Status](https://coveralls.io/repos/github/scaljeri/angular-route-xxl/badge.svg?branch=multiple-values)](https://coveralls.io/github/scaljeri/angular-route-xxl?branch=multiple-values)
@@ -16,15 +6,24 @@ that the component has the `ngOnInit` function defined.
 
 [Stackblitz demo](https://stackblitz.com/edit/angular-route-xxl?file=app%2Ffoo-bar%2Ffoo-bar.component.ts)
 
-This library holds a couple of decorators which can add usefull functionality to your components easily. 
-
 The following decorators are available
 
   *  [@RouteData / @RouteParams / @RouteQueryParams](docs/ROUTE.md) 
   *  [@HostElement](docs/HOST_ELEMENT.md)
   *  [@Tunnel](docs/TUNNEL.md)
   
-Below is a short description of each decorator
+Below is a short description of each `@decorator`
+
+### @HostElement
+This decorator monitors the dimentions (width/height) of the host element or its child elements.
+
+```typescript
+    @HostElement('width') width$: Observable<number>;
+    @HostElement('width', {observable: false}) width: number;
+    @HostElement('height', 'width'}) size$: Observable<{height: number, width: number};
+```
+
+[More](docs/HOST_ELEMENT.md)
 
 ### @RouteData / @RouteParams / @RouteQueryParams
 These decorators let you access the router's data, params and queryParams easily with just one line of code. 
@@ -56,6 +55,8 @@ This decorator allows you to setup communication between instances of the same c
 
 [More](docs/TUNNEL.md)
 
+### Bookmarks
+  * Small polyfill: https://stackoverflow.com/questions/6492683/how-to-detect-divs-dimension-changed
 
 ### Contributors
    + @dirkluijk - Suggested to solve the issue using decorators
