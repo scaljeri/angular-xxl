@@ -1,4 +1,4 @@
-This library contains a couple of decorators which provide useful functionality for angular components. 
+This library contains a couple of decorators which add magic to angular components. 
 
 [![CircleCI](https://circleci.com/gh/scaljeri/angular-route-xxl.svg?style=svg)](https://circleci.com/gh/scaljeri/angular-route-xxl)
 [![Coverage Status](https://coveralls.io/repos/github/scaljeri/angular-route-xxl/badge.svg?branch=multiple-values)](https://coveralls.io/github/scaljeri/angular-route-xxl?branch=multiple-values)
@@ -28,6 +28,7 @@ This decorator monitors dimensions (width/height) of elements; The root element 
 ```
 
 [Read more](docs/HOST_ELEMENT.md)
+
 [DEMO](https://stackblitz.com/edit/host-element?file=app%2Fnormal%2Fnormal.component.ts)
 
 ### @RouteData / @RouteParams / @RouteQueryParams
