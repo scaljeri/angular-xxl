@@ -12,7 +12,8 @@
     "lib": ["es2015", "dom"]
   },
   "files": [
-    "src/route-decorators.ts",
-    "src/host-element.decorator.ts"
+    "src/route.decorators.ts",
+    "src/host-element.decorator.ts",
+    "src/tunnel.decorator.ts"
   ]
 }
