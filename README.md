@@ -1,25 +1,23 @@
-This library contains a couple of decorators which add magic to angular components. 
+This library contains a couple of decorators which provide functionality useful for angular components. 
 
-[![CircleCI](https://circleci.com/gh/scaljeri/angular-route-xxl.svg?style=svg)](https://circleci.com/gh/scaljeri/angular-route-xxl)
-[![Coverage Status](https://coveralls.io/repos/github/scaljeri/angular-route-xxl/badge.svg?branch=multiple-values)](https://coveralls.io/github/scaljeri/angular-route-xxl?branch=multiple-values)
-[![GitHub issues](https://img.shields.io/github/issues/scaljeri/angular-route-xxl.svg?style=plastic)](https://github.com/scaljeri/angular-route-xxl/issues)
-
-[Stackblitz demo](https://stackblitz.com/edit/angular-route-xxl?file=app%2Ffoo-bar%2Ffoo-bar.component.ts)
+[![CircleCI](https://circleci.com/gh/scaljeri/angular-xxl.svg?style=svg)](https://circleci.com/gh/scaljeri/angular-xxl)
+[![Coverage Status](https://coveralls.io/repos/github/scaljeri/angular-xxl/badge.svg?branch=multiple-values)](https://coveralls.io/github/scaljeri/angular-xxl?branch=multiple-values)
+[![GitHub issues](https://img.shields.io/github/issues/scaljeri/angular-xxl.svg?style=plastic)](https://github.com/scaljeri/angular-xxl/issues)
 
 The following decorators are available
 
-  *  [@RouteData / @RouteParams / @RouteQueryParams](docs/ROUTE.md) 
-  *  [@HostElement](docs/HOST_ELEMENT.md)
-  *  [@Tunnel](docs/TUNNEL.md)
+  *  [@RouteData / @RouteParams / @RouteQueryParams](docs/ROUTE.md) - Easy route access 
+  *  [@HostElement](docs/HOST_ELEMENT.md) - Monitor element dimensions
+  *  [@Tunnel](docs/TUNNEL.md) - Communication between components
   
-And they can be install with the following command
+This library can be installed using `yarn`
 
     $> yarn add angular-xxl
     
 Below is a short description of each `@decorator`
 
 ### @HostElement
-This decorator monitors dimensions (width/height) of elements; The root element and/or any of its children
+This decorator monitors dimensions (width/height) of elements; The root element of the component and/or any of its children
 
 ```typescript
     @HostElement('width') width$: Observable<number>;
@@ -40,14 +38,14 @@ These decorators let you access the router's data, params and queryParams easily
     templateUrl: './contacts.component.html',
     styleUrls: ['./contacts.component.scss']
 })
-export class ContactsComponent {
+export class ContactsComponent implements OnInit {
     @RouteData() contacts$: Observable<Contact[]>;
     @RouteParams('contactId', { observable: false}) contactId: string;
     @RouteQueryParams('search', { pipe: [map( x => x * 10)]}) search$: Observable<string>;
     
-    constructor(private route: ActivatedRoute) {}
+    constructor(private route: ActivatedRoute) {} // The `route` is required!
     
-    ngOnInit(): void {} // Without this it will not work if AOT enabled
+    ngOnInit(): void {} // This is required too
 }
 ```
 
@@ -61,8 +59,10 @@ This decorator allows you to setup communication between instances of the same c
 
 [Read more](docs/TUNNEL.md)
 
-### Bookmarks
-  * Small polyfill: https://stackoverflow.com/questions/6492683/how-to-detect-divs-dimension-changed
+[DEMO](https://stackblitz.com/edit/angular-tunnel?file=app%2Fblock%2Fblock.component.ts)
+
+### TODO
+  * Write polyfill for size-change detection using [this](https://stackoverflow.com/questions/6492683/how-to-detect-divs-dimension-changed)
 
 ### Contributors
    + @dirkluijk - Suggested to solve the issue using decorators
