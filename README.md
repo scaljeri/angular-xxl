@@ -51,7 +51,9 @@ export class ContactsComponent implements OnInit {
 
 There is some flexibility in how the data is received in the component which is all described in more detail [here](docs/ROUTE.md).
 
-[Stackblitz demo](https://stackblitz.com/edit/angular-route-xxl?file=app%2Ffoo-bar-default%2Ffoo-bar-default.component.ts)
+[Read more](docs/ROUTE.md)
+
+[Demo](https://stackblitz.com/edit/angular-route-xxl?file=app%2Ffoo-bar-default%2Ffoo-bar-default.component.ts)
 
 
 ### Tunnel
