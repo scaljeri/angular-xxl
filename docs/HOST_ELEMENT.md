@@ -14,14 +14,36 @@ These provide an Observable, but if you are only interested in real values
 @HostElement('height', width, { observable: false, selector: '.content'}) contentSize: number;
 ```
 
-Finally, you can also define rxjs [pipeable](https://github.com/ReactiveX/rxjs/blob/master/doc/pipeable-operators.md)
+You can also define rxjs [pipeable](https://github.com/ReactiveX/rxjs/blob/master/doc/pipeable-operators.md)
 operator, to manipulate or filter out certain values
 
 ```typescript
 @HostElement('height', { observable: false, pipe: [map(myMap), filter(myFilter)]}) height: number;
 ```
 
+Finally, this decorator used the `not-very-well-supported` `Resizebserver`, so you need a polyfill. Add the 
+following lines to your `polyfill.ts` file
+
+```typescript
+import ResizeObserver from 'resize-observer-polyfill';
+
+declare global {
+  interface Window { ResizeObserver: any; }
+}
+
+if (!window.ResizeObserver) {
+  window.ResizeObserver = ResizeObserver;
+}
+```
+
+and make sure to install the npm module
+
+   $> yarn add resize-observer-polyfill
+
+
 You can see all this in action in [this demo](https://stackblitz.com/edit/host-element)
+
+
 
 Example:
 
