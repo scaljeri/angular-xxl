@@ -1,9 +1,9 @@
 {
-  "name": "angular-route-xxl",
-  "version": "1.5.0",
+  "name": "angular-xxl",
+  "version": "1.0.1",
   "main": "index.js",
   "types": "index.d.ts",
-  "repository": "https://github.com/scaljeri/angular-route-xxl.git",
+  "repository": "https://github.com/scaljeri/angular-xxl.git",
   "author": "lucascalje <lucas@calje.eu>",
   "license": "MIT",
   "keywords": [
@@ -64,7 +64,7 @@
     "typescript": "2.6.2"
   },
   "peerDependencies": {
-    "@angular/core": "^4.0.0"
+    "@angular/core": "^5.2.0"
   },
   "dependencies": {}
 }
