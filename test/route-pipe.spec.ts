@@ -43,11 +43,13 @@ export function specs(RouteQueryParams, should) {
             });
 
             it('should have scoped the lettables for multiple values', (done) => {
-                helper.updateRoute(2, {foa: 5, fob: 6});
+                const data = {foa: 5, fob: 6};
+
+                helper.updateRoute(2, data);
 
                 foos.forEach((foo, i) => {
                     foo.ab$.subscribe(value => {
-                        value.should.eql({foa: 5, fob: 6});
+                        value.should.eql(data);
                         i === 2 && done();
                     });
                 });
@@ -96,7 +98,7 @@ export function specs(RouteQueryParams, should) {
                 helper.enableQueryParams();
 
                 foos.forEach(foo => foo.ngOnInit());
-                helper.updateRoute(2, {foa: 0}); //, fob: 0, foc: 0});
+                helper.updateRoute(2, {foa: 0});
             });
 
             it('should use the lettables', (done) => {
@@ -109,7 +111,9 @@ export function specs(RouteQueryParams, should) {
             });
 
             it('should have scoped the lettables for multiple values', (done) => {
-                helper.updateRoute(2, { foa: 5, fob: 6 }); // should be filter out
+                const data = { foa: 5, fob: 6 };
+
+                helper.updateRoute(2, data); // should be filter out
 
                 foos.forEach((foo, i) => {
                     foo.ab$.should.eql({foa: 5, fob: 6});
