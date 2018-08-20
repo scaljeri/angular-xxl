@@ -1,7 +1,6 @@
 import * as helper from './helpers';
 import { filter, map } from 'rxjs/operators';
 import { Foo } from './helpers';
-import { Bar } from './helpers';
 
 function doubleVal(input): number {
     return input * 2;
