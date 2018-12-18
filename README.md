@@ -53,7 +53,7 @@ There is some flexibility in how the data is received in the component which is 
 
 [Read more](docs/ROUTE.md)
 
-[Demo](https://stackblitz.com/edit/angular-route-xxl?file=app%2Ffoo-bar-default%2Ffoo-bar-default.component.ts)
+[Demo](https://stackblitz.com/edit/angular-route-xxl-g64g5p?file=app%2Futils%2Froute-decorator.ts)
 
 
 ### Tunnel
