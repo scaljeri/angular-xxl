@@ -1,11 +1,11 @@
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 
 const stream = new Subject<any>();
 
 export function Tunnel(): PropertyDecorator {
     return (prototype: { ngOnInit(): void }, key: string): void => {
-        const ngOnInit = prototype.ngOnInit,
-            tunnel = {
+        const ngOnInit = prototype.ngOnInit;
+        const tunnel = {
                 emit: (obj: any) => {
                     stream.next(obj);
                 },

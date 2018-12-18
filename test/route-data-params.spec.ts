@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import * as sinon from 'sinon';
 
 import * as helper from './helpers';

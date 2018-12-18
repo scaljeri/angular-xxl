@@ -1,5 +1,4 @@
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
 declare global {
@@ -34,9 +33,10 @@ export function HostElement(...args: Array<string | HostElementConfig>): Propert
         const ngOnDestroy = proto.ngOnDestroy;
         let observer: ResizeObserver;
 
-        const properties = (args.length > 0 ? args : [key.replace(/\$$/, '')]) as Array<string>;
+        const properties = (args.length > 0 ? args : [key.replace(/\$$/, '')]) as string[];
         proto.ngOnInit = function(): void {
-            const target = config.selector ? this.element.nativeElement.querySelector(config.selector) : this.element.nativeElement;
+            const target = config.selector ?
+                this.element.nativeElement.querySelector(config.selector) : this.element.nativeElement;
             const updates = new BehaviorSubject<any>((args.length > 1 ? {} : null));
 
             setTimeout(() => {
@@ -44,7 +44,7 @@ export function HostElement(...args: Array<string | HostElementConfig>): Propert
                 observer.observe(target);
             });
 
-            const updates$: Observable<any> = updates.pipe(
+            const pipes = [
                 filter(entries => !!entries),
                 map((entries: ResizeObserverEntry[]) => {
                     return entries.length ? entries[0].contentRect : (properties.length > 1 ? {} : null);
@@ -57,8 +57,10 @@ export function HostElement(...args: Array<string | HostElementConfig>): Propert
                         return properties.length > 1 ? list : list[arg];
                     }, {});
                 }),
-                ...(config.pipe || []),
-            );
+                ...(config.pipe || [])
+            ];
+
+            const updates$: Observable<any> = updates.pipe.apply(updates, pipes);
 
             if (config.observable === false) {
                 if (properties.length > 1) {

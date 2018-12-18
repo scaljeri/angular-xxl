@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs'
 import { filter, map } from 'rxjs/operators';
 import * as sinon from 'sinon';
 import { HostElement, ResizeObserver } from '../src/host-element.decorator';

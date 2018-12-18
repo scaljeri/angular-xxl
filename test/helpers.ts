@@ -1,10 +1,8 @@
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
-import { combineLatest } from 'rxjs/observable/combineLatest';
+import { combineLatest, BehaviorSubject, Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import * as sinon from 'sinon';
-import {Subject} from "rxjs/Subject";
+import {} from "rxjs/Subject";
 
 export interface Route {
     data?: any;

@@ -1,10 +1,9 @@
-import { Observable } from 'rxjs/Observable';
+import { OperatorFunction, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { OperatorFunction } from 'rxjs/src/interfaces';
 
 export interface RouteXxlConfig {
     observable?: boolean;
-    pipe?: OperatorFunction<any, any>[];
+    pipe?: Array<OperatorFunction<any, any>>;
     inherit?: boolean;
 }
 
