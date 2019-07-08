@@ -1,5 +1,5 @@
-import { OperatorFunction, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {OperatorFunction, Observable} from "rxjs";
+import {map} from "rxjs/operators";
 
 export interface RouteXxlConfig {
     observable?: boolean;
@@ -59,11 +59,11 @@ function extractValues(args: string[], stream$: Observable<any>): Observable<any
  * @returns {(...args: string | RouteXxlConfig[]) => PropertyDecorator}
  */
 function routeDecoratorFactory(routeProperty, args, extractor?): PropertyDecorator {
-    const config = (typeof args[args.length - 1] === 'object' ? args.pop() : {}) as RouteXxlConfig;
+    const config = (typeof args[args.length - 1] === "object" ? args.pop() : {}) as RouteXxlConfig;
 
     return (prototype: { ngOnInit(): void }, key: string): void => {
         if (!args.length) {
-            args = [key.replace(/\$$/, '')];
+            args = [key.replace(/\$$/, "")];
         }
 
         // `ngOnInit` should exist on the component, otherwise the decorator will not work with the AOT compiler!!
@@ -103,13 +103,13 @@ function routeDecoratorFactory(routeProperty, args, extractor?): PropertyDecorat
 The factory is wrapped in a function for the AOT compiler
  */
 export function RouteData(...args: Array<string | RouteXxlConfig>): PropertyDecorator {
-    return routeDecoratorFactory('data', args, extractRoute);
+    return routeDecoratorFactory("data", args, extractRoute);
 }
 
 export function RouteParams(...args: Array<string | RouteXxlConfig>): PropertyDecorator {
-    return routeDecoratorFactory('params', args, extractRoute);
+    return routeDecoratorFactory("params", args, extractRoute);
 }
 
 export function RouteQueryParams(...args: Array<string | RouteXxlConfig>): PropertyDecorator {
-    return routeDecoratorFactory('queryParams', args, route => route.queryParams);
+    return routeDecoratorFactory("queryParams", args, route => route.queryParams);
 }

@@ -9,6 +9,7 @@
     "linterOptions": {
         "exclude": [
             "node_modules/**",
+            "test/**",
             ""
         ]
     },
@@ -23,6 +24,12 @@
         "no-console": [false, "warn", "error"],
         "arrow-parens": [false, "as-needed"],
         "curly": [false, "as-needed"],
-        "max-line-length": [true, 200]
+        "max-line-length": [true, 200],
+        "max-classes-per-file": false,
+        "whitespace": false,
+        "no-shadowed-variable": false,
+        "only-arrow-functions": false,
+        "skipLibCheck": true,
+        "prefer-const": false
     }
 }

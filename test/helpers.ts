@@ -1,4 +1,4 @@
-import { combineLatest, BehaviorSubject, Observable, Subject } from 'rxjs';
+import { combineLatest, BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import * as sinon from 'sinon';

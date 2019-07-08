@@ -1,17 +1,21 @@
-import { BehaviorSubject, Observable } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import {BehaviorSubject, Observable} from "rxjs";
+import {filter, map} from "rxjs/operators";
 
 declare global {
-    interface Window { ResizeObserver: any; }
+    interface Window {
+        ResizeObserver: any;
+    }
 }
 
 export interface ResizeObserver {
     observe(target: HTMLElement): void;
+
     disconnect(): void;
 }
 
 interface Proto {
     ngOnInit(): void;
+
     ngOnDestroy(): void;
 }
 
@@ -26,14 +30,14 @@ export interface HostElementConfig {
 }
 
 export function HostElement(...args: Array<string | HostElementConfig>): PropertyDecorator {
-    const config = (typeof args[args.length - 1] === 'object' ? args.pop() : {}) as HostElementConfig;
+    const config = (typeof args[args.length - 1] === "object" ? args.pop() : {}) as HostElementConfig;
 
     return function factory(proto: Proto, key: string): void {
         const ngOnInit = proto.ngOnInit;
         const ngOnDestroy = proto.ngOnDestroy;
         let observer: ResizeObserver;
 
-        const properties = (args.length > 0 ? args : [key.replace(/\$$/, '')]) as string[];
+        const properties = (args.length > 0 ? args : [key.replace(/\$$/, "")]) as string[];
         proto.ngOnInit = function(): void {
             const target = config.selector ?
                 this.element.nativeElement.querySelector(config.selector) : this.element.nativeElement;
