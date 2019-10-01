@@ -5,7 +5,6 @@ module.exports = function(config) {
     packageManager: "yarn",
     reporters: ["html", "clear-text", "progress"],
     testRunner: "mocha",
-    transpilers: ['babel'],
     testFramework: "mocha",
     coverageAnalysis: "off",
     tsconfigFile: "tsconfig.json",
