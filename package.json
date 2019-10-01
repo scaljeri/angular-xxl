@@ -18,7 +18,7 @@
         "build": "rm -rf bundle && ./node_modules/.bin/tsc && ./node_modules/.bin/tsc -d --lib 'es2015, dom' ./index.ts",
         "prepublish": "yarn build",
         "test": "./node_modules/.bin/nyc mocha",
-        "stryker": "./node_modules/.bin/stryker run",
+        "stryker": "stryker run",
         "coveralls": "./node_modules/.bin/coveralls < coverage/lcov.info",
         "lint": "./node_modules/.bin/tslint -c tslint.json -p tsconfig.json 'src/*.ts'"
     },
@@ -41,7 +41,12 @@
         "instrument": true
     },
     "devDependencies": {
-        "@stryker-mutator/core": "^2.0.1",
+        "@stryker-mutator/api": "^2.1.0",
+        "@stryker-mutator/core": "^2.1.0",
+        "@stryker-mutator/html-reporter": "^2.1.0",
+        "@stryker-mutator/mocha-framework": "^2.1.0",
+        "@stryker-mutator/mocha-runner": "^2.1.0",
+        "@stryker-mutator/typescript": "^2.1.0",
         "@types/chai": "4.1.7",
         "@types/mocha": "5.2.7",
         "@types/sinon-chai": "3.2.2",
@@ -54,14 +59,7 @@
         "rxjs-tslint-rules": "4.24.3",
         "sinon": "7.3.2",
         "sinon-chai": "3.3.0",
-        "stryker": "0.35.1",
-        "stryker-api": "0.24.1",
-        "stryker-babel-transpiler": "0.10.1",
-        "stryker-cli": "1.0.0",
-        "stryker-html-reporter": "0.18.1",
-        "stryker-mocha-framework": "0.15.1",
-        "stryker-mocha-runner": "0.17.1",
-        "stryker-typescript": "^0.18.1",
+        "stryker-cli": "^1.0.0",
         "ts-node": "8.3.0",
         "tslint": "5.18.0",
         "typescript": "3.5.2"
