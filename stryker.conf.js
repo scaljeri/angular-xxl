@@ -3,7 +3,7 @@ module.exports = function(config) {
     files: ['test/*.ts', 'src/*.ts'],
     mutator: "typescript",
     packageManager: "yarn",
-    reporters: ["html", "clear-text", "progress"],
+    reporters: ["clear-text", "progress"],
     testRunner: "mocha",
     testFramework: "mocha",
     coverageAnalysis: "off",

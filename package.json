@@ -41,30 +41,29 @@
         "instrument": true
     },
     "devDependencies": {
-        "@stryker-mutator/api": "^2.1.0",
-        "@stryker-mutator/core": "^2.1.0",
-        "@stryker-mutator/html-reporter": "^2.1.0",
-        "@stryker-mutator/mocha-framework": "^2.1.0",
-        "@stryker-mutator/mocha-runner": "^2.1.0",
-        "@stryker-mutator/typescript": "^2.1.0",
-        "@types/chai": "4.1.7",
-        "@types/mocha": "5.2.7",
-        "@types/sinon-chai": "3.2.2",
+        "@stryker-mutator/api": "3.2.3",
+        "@stryker-mutator/core": "3.2.3",
+        "@stryker-mutator/mocha-framework": "3.2.3",
+        "@stryker-mutator/mocha-runner": "3.2.3",
+        "@stryker-mutator/typescript": "3.2.3",
+        "@types/chai": "4.2.11",
+        "@types/mocha": "7.0.2",
+        "@types/sinon-chai": "3.2.4",
         "chai": "4.2.0",
-        "coveralls": "3.0.4",
-        "mocha": "6.1.4",
-        "nyc": "14.1.1",
-        "rxjs": "6.5.2",
-        "rxjs-tslint": "^0.1.6",
-        "rxjs-tslint-rules": "4.24.3",
-        "sinon": "7.3.2",
-        "sinon-chai": "3.3.0",
-        "stryker-cli": "^1.0.0",
-        "ts-node": "8.3.0",
-        "tslint": "5.18.0",
-        "typescript": "3.5.2"
+        "coveralls": "3.1.0",
+        "mocha": "7.1.2",
+        "nyc": "15.0.1",
+        "rxjs": "6.5.5",
+        "rxjs-tslint": "0.1.8",
+        "rxjs-tslint-rules": "4.32.0",
+        "sinon": "9.0.2",
+        "sinon-chai": "3.5.0",
+        "stryker-cli": "1.0.0",
+        "ts-node": "8.10.1",
+        "tslint": "6.1.2",
+        "typescript": "3.9.2"
     },
     "peerDependencies": {
-        "@angular/core": "^8.0.0"
+        "@angular/core": "^9.0.0"
     }
 }
