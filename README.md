@@ -1,7 +1,8 @@
 This library contains a couple of decorators which provide functionality useful for angular components. 
 
 [![CircleCI](https://circleci.com/gh/scaljeri/angular-xxl.svg?style=svg)](https://circleci.com/gh/scaljeri/angular-xxl)
-[![Coverage Status](https://coveralls.io/repos/github/scaljeri/angular-xxl/badge.svg?branch=multiple-values)](https://coveralls.io/github/scaljeri/angular-xxl?branch=multiple-values)
+[![Coverage Status](https://coveralls.io/repos/github/scaljeri/angular-xxl/badge.svg?branch=master)](https://coveralls.io/github/scaljeri/angular-xxl?branch=master)
+
 [![GitHub issues](https://img.shields.io/github/issues/scaljeri/angular-xxl.svg?style=plastic)](https://github.com/scaljeri/angular-xxl/issues)
 
 The following decorators are available
