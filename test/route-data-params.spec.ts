@@ -292,7 +292,7 @@ export function specs(RouteXxl, property, should) {
             it('should throw an missing route error', () => {
                 (function() {
                     RouteXxl('foa')(Foo.prototype, 'a$', 0);
-                }).should.throw(`Foo uses the ${property} @decorator without implementing 'ngOnInit'`);
+                }).should.throw('ngOnInit() should exist on the component, otherwise the decorator will not work with the AOT compiler!!');
             });
         });
 
@@ -304,7 +304,7 @@ export function specs(RouteXxl, property, should) {
             it('should throw an missing route error', () => {
                 (function() {
                     new Foo(null).ngOnInit();
-                }).should.throw(`Foo uses a route-xxl @decorator without a 'route: ActivatedRoute' property`);
+                }).should.throw('Foo uses a angular-xxl @decorator without a \'route: ActivatedRoute\' property');
             });
         });
 

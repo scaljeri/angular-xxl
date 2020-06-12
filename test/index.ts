@@ -17,6 +17,7 @@ import { specs as dataParamSpecs } from './route-data-params.spec';
 import { specs as pipeSpecs } from './route-pipe.spec';
 import { specs as queryParamSpecs } from './route-query-params.spec';
 import { specs as tunnelSpecs } from './tunnel.spec';
+import { replaceNgOnInitSpec } from './replace-ng-oninit.spec';
 
 dataParamSpecs(RouteData, 'data', should);
 dataParamSpecs(RouteParams, 'params', should);
@@ -25,3 +26,4 @@ pipeSpecs(RouteQueryParams, should);
 tunnelSpecs(Tunnel, should);
 
 hostElementSpecs(should);
+replaceNgOnInitSpec(should)

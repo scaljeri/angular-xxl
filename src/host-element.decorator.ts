@@ -1,5 +1,6 @@
-import {BehaviorSubject, Observable} from "rxjs";
-import {filter, map} from "rxjs/operators";
+import {BehaviorSubject, Observable} from 'rxjs';
+import {filter, map} from 'rxjs/operators';
+import { replaceNgOnInit } from './replace-ng-oninit';
 
 declare global {
     interface Window {
@@ -29,16 +30,14 @@ export interface HostElementConfig {
     observable?: boolean;
 }
 
-export function HostElement(...args: Array<string | HostElementConfig>): PropertyDecorator {
-    const config = (typeof args[args.length - 1] === "object" ? args.pop() : {}) as HostElementConfig;
+export function HostElement(...args: (string | HostElementConfig)[]): PropertyDecorator {
+    const config = (typeof args[args.length - 1] === 'object' ? args.pop() : {}) as HostElementConfig;
 
     return function factory(proto: Proto, key: string): void {
-        const ngOnInit = proto.ngOnInit;
-        const ngOnDestroy = proto.ngOnDestroy;
         let observer: ResizeObserver;
 
-        const properties = (args.length > 0 ? args : [key.replace(/\$$/, "")]) as string[];
-        proto.ngOnInit = function(): void {
+        const properties = (args.length > 0 ? args : [key.replace(/\$$/, '')]) as string[];
+        replaceNgOnInit(proto, function() {
             const target = config.selector ?
                 this.element.nativeElement.querySelector(config.selector) : this.element.nativeElement;
             const updates = new BehaviorSubject<any>((args.length > 1 ? {} : null));
@@ -77,13 +76,6 @@ export function HostElement(...args: Array<string | HostElementConfig>): Propert
             } else {
                 this[key] = updates$;
             }
-
-            ngOnInit.call(this);
-        };
-
-        proto.ngOnDestroy = function(): void {
-            observer.disconnect();
-            ngOnDestroy.call(this);
-        };
+        });
     };
 }

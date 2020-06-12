@@ -1,10 +1,10 @@
-import {Subject} from "rxjs";
+import {Subject} from 'rxjs';
+import { replaceNgOnInit } from './replace-ng-oninit';
 
 const stream = new Subject<any>();
 
 export function Tunnel(): PropertyDecorator {
     return (prototype: { ngOnInit(): void }, key: string): void => {
-        const ngOnInit = prototype.ngOnInit;
         const tunnel = {
             emit: (obj: any) => {
                 stream.next(obj);
@@ -12,10 +12,8 @@ export function Tunnel(): PropertyDecorator {
             stream$: stream.asObservable(),
         };
 
-        prototype.ngOnInit = function(): void {
+        replaceNgOnInit(prototype, function(): void {
             this[key] = tunnel;
-
-            ngOnInit.call(this);
-        };
+        });
     };
 }

@@ -21,7 +21,7 @@ export function specs(RouteQueryParams, should) {
             it('should throw an missing route error', () => {
                 (function() {
                     RouteQueryParams('foa')(Foo.prototype, 'a$', 0);
-                }).should.throw(`Foo uses the queryParams @decorator without implementing 'ngOnInit'`);
+                }).should.throw('ngOnInit() should exist on the component, otherwise the decorator will not work with the AOT compiler!!');
             });
         });
 
